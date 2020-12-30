@@ -8,23 +8,21 @@ class RedditClient
 {
   get MAX_NUM_POSTS() { return MAX_NUM_POSTS; }
 	
-  getCommentsFromSubreddit(numberOfPosts, subreddit, sortType, callbackFunction)
+  getCommentsFromSubreddit(numberOfPosts, subreddit, sortType)
   {
-    numberOfPosts = getValidNumberOfPosts(numberOfPosts);
-    let url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
-		
-    this.getCommentsFromURL(url, function(data) {
-      callbackFunction(data);
+    const self = this;
+    return new Promise(function(resolve, reject) {
+      numberOfPosts = getValidNumberOfPosts(numberOfPosts);
+      const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
+
+      self.getCommentsFromURL(url).then(resolve).catch(reject);
     });
   }
 
-  getCommentsFromURL(url, callbackFunction)
+  getCommentsFromURL(url)
   {
-    var self = this;
-    this.getDataFromUrl(url, function(data)
-    {
-      let comments = getCommentObjectFromRawURLData(data, self.errorHandler);
-      callbackFunction(comments);
+    return new Promise(function(resolve, reject) {
+      getDataFromUrl(url).then(getCommentObjectFromRawURLData).then(resolve).catch(reject);
     });
   }
 	
@@ -54,10 +52,18 @@ class RedditClient
       this.errorHandler.handleError('error getting subreddit', e, ('subreddit is: ' + subreddit));
     });
   }
-	
-  getDataFromUrl(url, callbackFunction)
-  {
-    console.log('trying: ' + url);
+}
+
+/**
+ * Run a GET request on a URL and return all the data
+ *
+ * @param url URL to get data from
+ * @return a promise containing data returned from the url
+*/
+function getDataFromUrl(url)
+{
+  return new Promise(function(resolve, reject) {
+    console.debug('running GET request for url: ' + url);
     https.get(url, (resp) => 
     {
       let data = '';
@@ -69,42 +75,40 @@ class RedditClient
 
       // The whole response has been received. Print out the result.
       resp.on('end', () => {
-        this.lastRequestSentAt = new Date().getTime();
-        callbackFunction(data);
+        resolve(data);
       });
     }).on("error", (err) => {
-      this.errorHandler.handleError('error getting data from url', err, ('url is: ' + url));
+      reject('error getting data from url', err, ('url is: ' + url));
     });
-  }
+  });
 }
 
-function getCommentObjectFromRawURLData(rawDataFromURL, errorHandler)
+/**
+ * Returns an object based on the data returned from a Reddit URL.
+ *
+ * @param rawDataFromURL Data from a Reddit URL, containing all the comment info
+ * @return A Comment object containing body, subreddit etc
+*/
+function getCommentObjectFromRawURLData(rawDataFromURL)
 {
-  try
+  return JSON.parse(rawDataFromURL).data.children.map(comment => 
   {
-    return JSON.parse(rawDataFromURL).data.children.map(comment => 
-    {
-      comment = comment.data;
-      return {
-        body: comment.body,
-        subreddit: comment.subreddit,
-        authorFullname: comment.author_fullname,
-        postTitle: comment.title,
-        name: comment.name,
-        ups: comment.ups,
-        score: comment.score,
-        created: comment.created_utc,
-        id: comment.id,
-        author: comment.author,
-        url: comment.link_url,
-        permalink: comment.permalink
-      };
-    });
-  }
-  catch (err)
-  {
-    errorHandler.handleError('error while Parsing JSON comment from Raw URL data', err, ('data was: ' + rawDataFromURL));
-  }
+    comment = comment.data;
+    return {
+      body: comment.body,
+      subreddit: comment.subreddit,
+      authorFullname: comment.author_fullname,
+      postTitle: comment.title,
+      name: comment.name,
+      ups: comment.ups,
+      score: comment.score,
+      created: comment.created_utc,
+      id: comment.id,
+      author: comment.author,
+      url: comment.link_url,
+      permalink: comment.permalink
+    };
+  });
 }
 
 /**
@@ -115,9 +119,9 @@ function getCommentObjectFromRawURLData(rawDataFromURL, errorHandler)
  */
 function getValidNumberOfPosts(numberOfPosts) 
 {
-  if(numberOfPosts > 100)
+  if(numberOfPosts > MAX_NUM_POSTS)
   {
-    numberOfPosts = 100;
+    numberOfPosts = MAX_NUM_POSTS;
   }
   else if (numberOfPosts < 1 || !numberOfPosts)
   {
