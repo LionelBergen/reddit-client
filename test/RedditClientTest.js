@@ -32,15 +32,6 @@ describe('get comments from subreddit', () => {
     
     const result = await RedditClient.getCommentsFromSubreddit(1, 'LearnProgramming', 'new');
     assert.equal("learnprogramming", result[0].subreddit);
-    
-    /*.then(function(data) {
-      console.log('++++++++++++++++++++++');
-      console.log(data);
-      console.log('++++++++++++++++++++++');
-    }).catch(function(error) {
-      assert.fail(error);
-    });*/
-    
   });
 });
 
