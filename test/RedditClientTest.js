@@ -19,13 +19,12 @@ describe('Get Number Of Posts', () => {
     assert.equal(100, RedditClient.MAX_NUM_POSTS);
   });
   
-  it('should be final, not mutable', () => {
+  it('should be final/immutable', () => {
     RedditClient.MAX_NUM_POSTS = 101;
     assert.equal(100, RedditClient.MAX_NUM_POSTS);
   });
 });
 
-// TODO: Use 'Sinon' to mock URL calls and create tests using real, saved URL's.
 describe('get comments from subreddit', () => {
   it('should return a valid set of comment objects', async () => {
     mockhttps.get('https://www.reddit.com/r/LearnProgramming/new.json?limit=1', mockResponseForPostsCall)/*.andReturn('');*/
