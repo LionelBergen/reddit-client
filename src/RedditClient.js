@@ -7,6 +7,23 @@ const MAX_NUM_POSTS = 100;
 class RedditClient
 {
   get MAX_NUM_POSTS() { return MAX_NUM_POSTS; }
+  
+  /**
+   * Returns posts from subreddit
+   *
+   * @param numberOfPosts number of posts to retrieve, between 1-100
+   * @param subreddit subreddit to get posts from
+   * @param sortType E.G 'new', or 'hot'
+   * @return A promise, containing a list of RedditPost objects
+  */
+  getPostsFromSubreddit(numberOfPosts, subreddit, sortType) {
+    return new Promise(function(resolve, reject) {
+      numberOfPosts = getValidNumberOfPosts(numberOfPosts);
+      const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
+
+      getPostsFromURL(url).then(resolve).catch(reject);
+    });
+  }
 	
   getCommentsFromSubreddit(numberOfPosts, subreddit, sortType)
   {
@@ -16,13 +33,6 @@ class RedditClient
       const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
 
       self.getCommentsFromURL(url).then(resolve).catch(reject);
-    });
-  }
-
-  getCommentsFromURL(url)
-  {
-    return new Promise(function(resolve, reject) {
-      getDataFromUrl(url).then(getCommentObjectFromRawURLData).then(resolve).catch(reject);
     });
   }
 	
@@ -54,32 +64,45 @@ class RedditClient
   }
 }
 
-/**
- * Run a GET request on a URL and return all the data
- *
- * @param url URL to get data from
- * @return a promise containing data returned from the url
-*/
-function getDataFromUrl(url)
+function getCommentsFromURL(url)
 {
   return new Promise(function(resolve, reject) {
-    console.debug('running GET request for url: ' + url);
-    https.get(url, (resp) => 
-    {
-      let data = '';
+    getDataFromUrl(url).then(getCommentObjectFromRawURLData).then(resolve).catch(reject);
+  });
+}
 
-      // A chunk of data has been recieved.
-      resp.on('data', (chunk) => {
-        data += chunk;
-      });
+function getPostsFromURL(url)
+{
+  return new Promise(function(resolve, reject) {
+    getDataFromUrl(url).then(getPostObjectsFromRawURLData).then(resolve).catch(reject);
+  });
+}
 
-      // The whole response has been received. Print out the result.
-      resp.on('end', () => {
-        resolve(data);
-      });
-    }).on("error", (err) => {
-      reject('error getting data from url', err, ('url is: ' + url));
-    });
+/**
+ * Returns an object based on the data returned from a Reddit URL.
+ *
+ * @param rawDataFromURL Data from a Reddit URL, containing all the comment info
+ * @return A Comment object containing body, subreddit etc
+*/
+function getPostObjectsFromRawURLData(rawDataFromURL)
+{
+  return JSON.parse(rawDataFromURL).data.children.map(post => 
+  {
+    post = post.data;
+    return {
+      body: post.selftext,
+      subreddit: post.subreddit,
+      authorFullname: post.author_fullname,
+      postTitle: post.title,
+      name: post.name,
+      ups: post.ups,
+      score: post.score,
+      created: post.created_utc,
+      id: post.id,
+      author: post.author,
+      url: post.url,
+      permalink: post.permalink
+    };
   });
 }
 
@@ -108,6 +131,35 @@ function getCommentObjectFromRawURLData(rawDataFromURL)
       url: comment.link_url,
       permalink: comment.permalink
     };
+  });
+}
+
+/**
+ * Run a GET request on a URL and return all the data
+ *
+ * @param url URL to get data from
+ * @return a promise containing data returned from the url
+*/
+function getDataFromUrl(url)
+{
+  return new Promise(function(resolve, reject) {
+    console.debug('running GET request for url: ' + url);
+    https.get(url, (resp) => 
+    {
+      let data = '';
+
+      // A chunk of data has been recieved.
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      // The whole response has been received. Print out the result.
+      resp.on('end', () => {
+        resolve(data);
+      });
+    }).on("error", (err) => {
+      reject('error getting data from url', err, ('url is: ' + url));
+    });
   });
 }
 

@@ -25,11 +25,17 @@ describe('Get Number Of Posts', () => {
 });
 
 describe('get comments from subreddit', () => {
-  it('should return a valid set of comment objects', async () => {
+  it('should return a single valid post object', async () => {
     mockhttps.get('https://www.reddit.com/r/LearnProgramming/new.json?limit=1', mockResponseForPostsCall)/*.andReturn('');*/
     ;
     
-    const result = await RedditClient.getCommentsFromSubreddit(1, 'LearnProgramming', 'new');
+    const result = await RedditClient.getPostsFromSubreddit(1, 'LearnProgramming', 'new');
+    assert.equal(1, result.length);
     assert.equal("learnprogramming", result[0].subreddit);
+    assert.equal("Grokking the Object Oriented Design Case Studies in Java", result[0].postTitle);
+    assert.equal(0, result[0].score);
+    assert.equal(1609286847, result[0].created);
+    assert.equal("https://www.reddit.com/r/learnprogramming/comments/kmqemj/grokking_the_object_oriented_design_case_studies/", result[0].url);
+    assert.equal("NoobHelpMan", result[0].author);
   });
 });
