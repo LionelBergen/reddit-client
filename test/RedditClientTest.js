@@ -1,17 +1,16 @@
 const RedditClient = require('../src/RedditClient.js');
 const assert = require('assert');
 const mockhttps = require('./mock-https/MockHttps');
-const sinon = require('sinon');
 const fs = require('fs');
 
 let mockResponseForPostsCall;
 
 before(function(done){
-    fs.readFile('./test/resources/response_from_reddit_newest_posts.json', 'utf8', function(err, fileContents) {
-      if (err) throw err;
-      mockResponseForPostsCall = fileContents;
-      done();
-    });
+  fs.readFile('./test/resources/response_from_reddit_newest_posts.json', 'utf8', function(err, fileContents) {
+    if (err) throw err;
+    mockResponseForPostsCall = fileContents;
+    done();
+  });
 });
 
 describe('Get Number Of Posts', () => {
@@ -34,16 +33,3 @@ describe('get comments from subreddit', () => {
     assert.equal("learnprogramming", result[0].subreddit);
   });
 });
-
-function getFakeClientRequestObject() {
-  return new FakeClientRequestObject();
-}
-
-/**
- * A class for mocking responses from https calls
-*/
-class FakeClientRequestObject {
-  on(nameOfEvent) {
-    console.log('called: ' + nameOfEvent + ' on mock clientRequest');
-  }
-}

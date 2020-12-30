@@ -7,8 +7,6 @@ const assert = require('assert');
 */
 class FakeClientRequestObject {
   on(nameOfEvent) {
-    //console.log('called: ' + nameOfEvent + ' on mock clientRequest');
-    //console.log(data.toString());
   }
 }
 
