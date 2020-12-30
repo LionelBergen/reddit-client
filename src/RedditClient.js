@@ -14,7 +14,7 @@ class RedditClient
    * @param numberOfPosts number of posts to retrieve, between 1-100
    * @param subreddit subreddit to get posts from
    * @param sortType E.G 'new', or 'hot'
-   * @return A promise, containing a list of RedditPost objects
+   * @return Promise containing a list of RedditPost objects
   */
   getPostsFromSubreddit(numberOfPosts, subreddit, sortType) {
     return new Promise(function(resolve, reject) {
@@ -22,6 +22,41 @@ class RedditClient
       const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
 
       getPostsFromURL(url).then(resolve).catch(reject);
+    });
+  }
+	
+  /**
+   * Gets a list of the names of moderators for the subreddit
+   *
+   * @param subreddit
+   * @return Promise containing list of moderator usernames
+  */
+  getSubredditModList(subreddit)
+  {
+    return new Promise(function(resolve, reject) {
+      const url = SUBREDDIT_URL + subreddit + '/about/moderators.json?';
+      console.debug('trying get mod list from url : ' + subreddit + ' url: ' + url);
+      https.get(url, (res) => {
+        let message = '';
+        res.on('data', (d) => {
+          message += d;
+        });
+        
+        res.on('end',function(){
+          if (res.statusCode != 200) 
+          {
+            reject("Api call failed with response code " + res.statusCode);
+          } 
+          else 
+          {
+            let messages = JSON.parse(message).data.children;
+            let modNamesCommaDelimitedList = messages.map(function(m) { return m.name; });
+            resolve(modNamesCommaDelimitedList);
+          }
+        });
+      }).on('error', (e) => {
+        reject('error getting subreddit', e, ('subreddit is: ' + subreddit));
+      });
     });
   }
 	
@@ -33,33 +68,6 @@ class RedditClient
       const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
 
       self.getCommentsFromURL(url).then(resolve).catch(reject);
-    });
-  }
-	
-  getSubredditModList(subreddit, callback)
-  {
-    const url = SUBREDDIT_URL + subreddit + '/about/moderators.json?';
-    console.log('trying get mod list from url : ' + subreddit + ' url: ' + url);
-    https.get(url, (res) => {
-      let message = '';
-      res.on('data', (d) => {
-        message += d;
-      });
-			
-      res.on('end',function(){
-        if (res.statusCode != 200) 
-        {
-          callback("Api call failed with response code " + res.statusCode);
-        } 
-        else 
-        {
-          let messages = JSON.parse(message).data.children;
-          let modNamesCommaDelimitedList = messages.map(function(m) { return m.name; });
-          callback(modNamesCommaDelimitedList);
-        }
-      });
-    }).on('error', (e) => {
-      this.errorHandler.handleError('error getting subreddit', e, ('subreddit is: ' + subreddit));
     });
   }
 }
