@@ -5,7 +5,8 @@ const fs = require('fs');
 
 let mockResponseForPostsCall;
 let mockResponseForModListCall;
-const numberOfTestResources = 2;
+let mockResponseForCommentsList;
+const numberOfTestResources = 3;
 
 before(function(done){
   let numberOfLoadedResources = 0;
@@ -20,6 +21,13 @@ before(function(done){
   fs.readFile('./test/resources/response_from_reddit_mod_list.json', 'utf8', function(err, fileContents) {
     if (err) throw err;
     mockResponseForModListCall = fileContents;
+    numberOfLoadedResources++;
+    if (numberOfLoadedResources == numberOfTestResources) done();
+  });
+  
+  fs.readFile('./test/resources/response_from_reddit_comment_list.json', 'utf8', function(err, fileContents) {
+    if (err) throw err;
+    mockResponseForCommentsList = fileContents;
     numberOfLoadedResources++;
     if (numberOfLoadedResources == numberOfTestResources) done();
   });
@@ -53,6 +61,18 @@ describe('get posts from subreddit', () => {
     assert.equal("https://www.reddit.com/r/learnprogramming/comments/kmqemj/grokking_the_object_oriented_design_case_studies/", result[0].url);
     assert.equal("NoobHelpMan", result[0].author);
   });
+  
+  it('sort type calls different url', async () => {
+    mockhttps.get('https://www.reddit.com/r/Programming/hot.json?limit=10', mockResponseForPostsCall);
+    
+    await RedditClient.getPostsFromSubreddit(10, 'Programming', 'hot');
+  });
+  
+  it('limit set to 100 if over 100', async () => {
+    mockhttps.get('https://www.reddit.com/r/Programming/hot.json?limit=100', mockResponseForPostsCall);
+    
+    await RedditClient.getPostsFromSubreddit(100000, 'Programming', 'hot');
+  });
 });
 
 describe('get moderators of subreddit', () => {
@@ -69,5 +89,19 @@ describe('get moderators of subreddit', () => {
     assert.ok(result.includes('BotTerminator'));
     assert.ok(result.includes('denialerror'));
     assert.ok(result.includes('insertAlias'));
+  });
+});
+
+describe('get latest comments from reddit', () => {
+  it('get list of comments from reddit', async () => {
+    mockhttps.get('https://www.reddit.com/r/all/comments.json?limit=100', mockResponseForCommentsList);
+    
+    const result = await RedditClient.getLatestCommentsFromReddit(100);
+    assert.equal(100, result.length);
+    
+    for (let i=0; i<100; i++) {
+      assert.notEqual(null, result[i]);
+      assert.notEqual(null, result[i].author);
+    }
   });
 });

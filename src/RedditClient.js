@@ -60,6 +60,12 @@ class RedditClient
     });
   }
 	
+  /**
+   * Get a list of the newest comments from Reddit
+   *
+   * @param numberOfComments A number between 1-100
+   * @return List of comment objects
+  */
   getLatestCommentsFromReddit(numberOfComments)
   {
     return new Promise(function(resolve, reject) {
