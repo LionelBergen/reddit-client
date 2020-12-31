@@ -2,6 +2,8 @@ const https = require('https');
 const sinon = require('sinon');
 const assert = require('assert');
 
+const sandbox = sinon.createSandbox();
+
 /**
  * A class for mocking responses from https calls
 */
@@ -13,6 +15,7 @@ class FakeClientRequestObject {
 class FakeHttpResponse {
   constructor(response) {
     this.response = response;
+    this.statusCode = 200;
   }
   
   on(nameOfEvent, data) {
@@ -33,7 +36,7 @@ class MockOptionsObject {
 
 class MockHttps {
   get(expectedUrl, response) {
-    sinon.stub(https, 'get').callsFake(function(url, callbackFunction) {
+    sandbox.stub(https, 'get').callsFake(function(url, callbackFunction) {
       assert.equal(expectedUrl, url, 'URL did not match expected. Expected: ' + expectedUrl + ' but was: ' + url);
       
       const resp = new FakeHttpResponse(response);
@@ -46,6 +49,11 @@ class MockHttps {
     });
     
     return new MockOptionsObject();
+  }
+  
+  reset() {
+    sandbox.resetBehavior();
+    sandbox.restore();
   }
 }
 
