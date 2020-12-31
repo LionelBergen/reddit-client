@@ -60,14 +60,13 @@ class RedditClient
     });
   }
 	
-  getCommentsFromSubreddit(numberOfPosts, subreddit, sortType)
+  getLatestCommentsFromReddit(numberOfComments)
   {
-    const self = this;
     return new Promise(function(resolve, reject) {
-      numberOfPosts = getValidNumberOfPosts(numberOfPosts);
-      const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
+      numberOfComments = getValidNumberOfPosts(numberOfComments);
+      const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
 
-      self.getCommentsFromURL(url).then(resolve).catch(reject);
+      getCommentsFromURL(url).then(resolve).catch(reject);
     });
   }
 }
