@@ -1,6 +1,6 @@
 const RedditClient = require('../src/RedditClient.js');
 const assert = require('assert');
-const mockhttps = require('./mock-https/MockHttps');
+const mockhttps = require('mock-https');
 const fs = require('fs');
 
 let mockResponseForPostsCall;
