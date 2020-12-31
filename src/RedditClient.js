@@ -63,7 +63,7 @@ class RedditClient
   /**
    * Get a list of the newest comments from Reddit
    *
-   * @param numberOfComments A number between 1-100
+   * @param numberOfComments A number between 10-100 (between 1-9 does not work for Reddit)
    * @return List of comment objects
   */
   getLatestCommentsFromReddit(numberOfComments)
