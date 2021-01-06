@@ -35,7 +35,7 @@ class RedditClient
   {
     return new Promise(function(resolve, reject) {
       const url = SUBREDDIT_URL + subreddit + '/about/moderators.json?';
-      console.debug('trying get mod list from url : ' + subreddit + ' url: ' + url);
+      // console.debug('trying get mod list from url : ' + subreddit + ' url: ' + url);
       https.get(url, (res) => {
         let message = '';
         res.on('data', (d) => {
@@ -156,7 +156,7 @@ function getCommentObjectFromRawURLData(rawDataFromURL)
 function getDataFromUrl(url)
 {
   return new Promise(function(resolve, reject) {
-    console.debug('running GET request for url: ' + url);
+    // console.debug('running GET request for url: ' + url);
     https.get(url, (resp) => 
     {
       let data = '';
