@@ -1,3 +1,5 @@
+const RedditComment = require('./classes/RedditComment.js');
+const RedditPost = require('./classes/RedditPost.js');
 const https = require('https');
 
 const SUBREDDIT_URL = "https://www.reddit.com/r/";
@@ -106,7 +108,7 @@ function getPostObjectsFromRawURLData(rawDataFromURL)
   return JSON.parse(rawDataFromURL).data.children.map(post => 
   {
     post = post.data;
-    return {
+    return new RedditPost({
       body: post.selftext,
       subreddit: post.subreddit,
       authorFullname: post.author_fullname,
@@ -119,7 +121,7 @@ function getPostObjectsFromRawURLData(rawDataFromURL)
       author: post.author,
       url: post.url,
       permalink: post.permalink
-    };
+    });
   });
 }
 
@@ -134,7 +136,7 @@ function getCommentObjectFromRawURLData(rawDataFromURL)
   return JSON.parse(rawDataFromURL).data.children.map(comment => 
   {
     comment = comment.data;
-    return {
+    return new RedditComment({
       body: comment.body,
       subreddit: comment.subreddit,
       authorFullname: comment.author_fullname,
@@ -147,7 +149,7 @@ function getCommentObjectFromRawURLData(rawDataFromURL)
       author: comment.author,
       url: comment.link_url,
       permalink: comment.permalink
-    };
+    });
   });
 }
 
