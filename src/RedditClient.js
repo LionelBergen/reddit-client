@@ -80,14 +80,18 @@ class RedditClient
 function getCommentsFromURL(url)
 {
   return new Promise(function(resolve, reject) {
-    getDataFromUrl(url).then(getCommentObjectFromRawURLData).then(resolve).catch(reject);
+    getDataFromUrl(url).then(getCommentObjectFromRawURLData).then(resolve).catch(function(error) {  
+      reject('error thrown for url: ' + url + ' error: ' + error);
+    });
   });
 }
 
 function getPostsFromURL(url)
 {
   return new Promise(function(resolve, reject) {
-    getDataFromUrl(url).then(getPostObjectsFromRawURLData).then(resolve).catch(reject);
+    getDataFromUrl(url).then(getPostObjectsFromRawURLData).then(resolve).catch(function(error) {  
+      reject('error thrown for url: ' + url + ' error: ' + error);
+    });
   });
 }
 
