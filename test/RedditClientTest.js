@@ -50,7 +50,7 @@ describe('Get Number Of Posts', () => {
 
 describe('get posts from subreddit', () => {
   it('should return a single valid post object', async () => {
-    mockhttps.get('https://www.reddit.com/r/LearnProgramming/new.json?limit=1', mockResponseForPostsCall);
+    mockhttps.expectGet('https://www.reddit.com/r/LearnProgramming/new.json?limit=1', mockResponseForPostsCall);
     
     const result = await RedditClient.getPostsFromSubreddit(1, 'LearnProgramming', 'new');
     assert.equal(1, result.length);
@@ -63,13 +63,13 @@ describe('get posts from subreddit', () => {
   });
   
   it('sort type calls different url', async () => {
-    mockhttps.get('https://www.reddit.com/r/Programming/hot.json?limit=10', mockResponseForPostsCall);
+    mockhttps.expectGet('https://www.reddit.com/r/Programming/hot.json?limit=10', mockResponseForPostsCall);
     
     await RedditClient.getPostsFromSubreddit(10, 'Programming', 'hot');
   });
   
   it('limit set to 100 if over 100', async () => {
-    mockhttps.get('https://www.reddit.com/r/Programming/hot.json?limit=100', mockResponseForPostsCall);
+    mockhttps.expectGet('https://www.reddit.com/r/Programming/hot.json?limit=100', mockResponseForPostsCall);
     
     await RedditClient.getPostsFromSubreddit(100000, 'Programming', 'hot');
   });
@@ -77,7 +77,7 @@ describe('get posts from subreddit', () => {
 
 describe('get moderators of subreddit', () => {
   it('should return a single valid post object', async () => {
-    mockhttps.get('https://www.reddit.com/r/LearnProgramming/about/moderators.json?', mockResponseForModListCall);
+    mockhttps.expectGet('https://www.reddit.com/r/LearnProgramming/about/moderators.json?', mockResponseForModListCall);
     
     const result = await RedditClient.getSubredditModList('LearnProgramming');
     assert.equal(8, result.length);
@@ -94,7 +94,7 @@ describe('get moderators of subreddit', () => {
 
 describe('get latest comments from reddit', () => {
   it('get list of comments from reddit', async () => {
-    mockhttps.get('https://www.reddit.com/r/all/comments.json?limit=100', mockResponseForCommentsList);
+    mockhttps.expectGet('https://www.reddit.com/r/all/comments.json?limit=100', mockResponseForCommentsList);
     
     const result = await RedditClient.getLatestCommentsFromReddit(100);
     assert.equal(100, result.length);
