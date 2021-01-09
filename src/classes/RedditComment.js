@@ -1,7 +1,7 @@
 class RedditComment {
   constructor(properties) {
     for(let property in properties) {
-      this[property] = properties[property]
+      this[property] = properties[property];
     }
   }
   
