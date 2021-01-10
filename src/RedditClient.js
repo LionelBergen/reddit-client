@@ -105,7 +105,15 @@ function getPostsFromURL(url)
 */
 function getPostObjectsFromRawURLData(rawDataFromURL)
 {
-  return JSON.parse(rawDataFromURL).data.children.map(post => 
+  const jsonDataFromUrl = JSON.parse(rawDataFromURL);
+  
+  if (!jsonDataFromUrl) {
+    throw 'Cannot get JSON from rawdata: ' + rawDataFromURL;
+  } else if (!jsonDataFromUrl.data || !jsonDataFromUrl.data.children) {
+    throw 'Malformed data. Raw data was: ' + rawDataFromURL + ' json data was: ' + jsonDataFromUrl;
+  }
+  
+  return jsonDataFromUrl.data.children.map(post => 
   {
     post = post.data;
     return new RedditPost({
@@ -133,7 +141,15 @@ function getPostObjectsFromRawURLData(rawDataFromURL)
 */
 function getCommentObjectFromRawURLData(rawDataFromURL)
 {
-  return JSON.parse(rawDataFromURL).data.children.map(comment => 
+  const jsonDataFromUrl = JSON.parse(rawDataFromURL);
+  
+  if (!jsonDataFromUrl) {
+    throw 'Cannot get JSON from rawdata: ' + rawDataFromURL;
+  } else if (!jsonDataFromUrl.data || !jsonDataFromUrl.data.children) {
+    throw 'Malformed data. Raw data was: ' + rawDataFromURL + ' json data was: ' + jsonDataFromUrl;
+  }
+  
+  return jsonDataFromUrl.data.children.map(comment => 
   {
     comment = comment.data;
     return new RedditComment({
