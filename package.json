@@ -1,12 +1,13 @@
 {
   "name": "reddit-simple-client",
-  "version": "1.0.7",
+  "version": "2.0.0",
   "description": "Simple module for interacting with Reddit, using an unauthenticated client",
   "main": "src/RedditClient.js",
   "scripts": {
     "test": "mocha",
     "eslint": "eslint --ignore-path .gitignore .",
-    "lint_auto_fix": "eslint --fix --ignore-path .gitignore ."
+    "lint_auto_fix": "eslint --fix --ignore-path .gitignore .",
+    "demo": "node src/demo.js"
   },
   "author": "Lionel Bergen",
   "license": "ISC",
@@ -24,7 +25,8 @@
     "reddit",
     "api",
     "reddit-api",
-    "reddit-bot"
+    "reddit-bot",
+    "reddit-api"
   ],
   "bugs": {
     "url": "https://github.com/LionelBergen/reddit-client/issues"
