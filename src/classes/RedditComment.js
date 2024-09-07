@@ -1,4 +1,4 @@
-class RedditComment {
+export default class RedditComment {
   constructor(properties) {
     for(let property in properties) {
       this[property] = properties[property];
@@ -19,5 +19,3 @@ class RedditComment {
     return result;
   }
 }
-
-module.exports = RedditComment;

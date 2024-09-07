@@ -1,12 +1,12 @@
-const RedditComment = require('./classes/RedditComment.js');
-const RedditPost = require('./classes/RedditPost.js');
-const https = require('https');
+import RedditComment from './classes/RedditComment.js';
+import RedditPost from './classes/RedditPost.js';
+import { getDataFromUrl } from './util/http.js';
 
-const SUBREDDIT_URL = "https://www.reddit.com/r/";
+const SUBREDDIT_URL = "https://ssl.reddit.com/r/";
 // This is the max number of posts Reddit allows to be retrieved at once. If a higher number is used, this is used anyway
 const MAX_NUM_POSTS = 100;
 
-class RedditClient
+export default class RedditClient
 {
   get MAX_NUM_POSTS() { return MAX_NUM_POSTS; }
   
@@ -19,9 +19,10 @@ class RedditClient
    * @return Promise containing a list of RedditPost objects
   */
   getPostsFromSubreddit(numberOfPosts, subreddit, sortType) {
+    numberOfPosts = getValidNumberOfPosts(numberOfPosts);
+    const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
+
     return new Promise(function(resolve, reject) {
-      numberOfPosts = getValidNumberOfPosts(numberOfPosts);
-      const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
 
       getPostsFromURL(url).then(resolve).catch(reject);
     });
@@ -65,27 +66,25 @@ class RedditClient
   /**
    * Get a list of the newest comments from Reddit
    *
-   * @param numberOfComments A number between 10-100 (between 1-9 does not work for Reddit)
+   * @param numberOfComments A number between 10-100 (between 1-9 does not work for Reddit). Defaults to 100
    * @return List of comment objects
   */
-  getLatestCommentsFromReddit(numberOfComments)
+  async getLatestCommentsFromReddit(numberOfComments = 100)
   {
-    return new Promise(function(resolve, reject) {
-      numberOfComments = getValidNumberOfPosts(numberOfComments);
-      const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
+    numberOfComments = getValidNumberOfPosts(numberOfComments);
+    const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
+    const latestComments = await getCommentsFromURL(url);
 
-      getCommentsFromURL(url).then(resolve).catch(reject);
-    });
+    return latestComments;
   }
 }
 
-function getCommentsFromURL(url)
+async function getCommentsFromURL(url)
 {
-  return new Promise(function(resolve, reject) {
-    getDataFromUrl(url).then(getCommentObjectFromRawURLData).then(resolve).catch(function(error) {  
-      reject('error thrown for url: ' + url + ' error: ' + error);
-    });
-  });
+  const dataFromUrl = await getDataFromUrl(url);
+  const postObjects = getPostObjectsFromRawURLData(dataFromUrl);
+
+  return postObjects;
 }
 
 function getPostsFromURL(url)
@@ -101,17 +100,11 @@ function getPostsFromURL(url)
  * Returns an object based on the data returned from a Reddit URL.
  *
  * @param rawDataFromURL Data from a Reddit URL, containing all the comment info
- * @return A Comment object containing body, subreddit etc
+ * @return An array of Post objects containing body, subreddit etc
 */
 function getPostObjectsFromRawURLData(rawDataFromURL)
 {
-  const jsonDataFromUrl = JSON.parse(rawDataFromURL);
-  
-  if (!jsonDataFromUrl) {
-    throw 'Cannot get JSON from rawdata: ' + rawDataFromURL;
-  } else if (!jsonDataFromUrl.data || !jsonDataFromUrl.data.children) {
-    throw 'Malformed data. Raw data was: ' + rawDataFromURL + ' json data was: ' + jsonDataFromUrl;
-  }
+  const jsonDataFromUrl = parseJSON(rawDataFromURL);
   
   return jsonDataFromUrl.data.children.map(post => 
   {
@@ -170,36 +163,7 @@ function getCommentObjectFromRawURLData(rawDataFromURL)
 }
 
 /**
- * Run a GET request on a URL and return all the data
- *
- * @param url URL to get data from
- * @return a promise containing data returned from the url
-*/
-function getDataFromUrl(url)
-{
-  return new Promise(function(resolve, reject) {
-    // console.debug('running GET request for url: ' + url);
-    https.get(url, (resp) => 
-    {
-      let data = '';
-
-      // A chunk of data has been recieved.
-      resp.on('data', (chunk) => {
-        data += chunk;
-      });
-
-      // The whole response has been received. Print out the result.
-      resp.on('end', () => {
-        resolve(data);
-      });
-    }).on("error", (err) => {
-      reject('error getting data from url', err, ('url is: ' + url));
-    });
-  });
-}
-
-/**
- * This is what happens anyway. Reddit accepts numbers over 100 as 100 and less then 1 as 1
+ * This is what happens anyway. Reddit accepts numbers over 100 as 100 and less then 10 as 10
  * 
  * @param numberOfPosts
  * @return
@@ -210,12 +174,25 @@ function getValidNumberOfPosts(numberOfPosts)
   {
     numberOfPosts = MAX_NUM_POSTS;
   }
-  else if (numberOfPosts < 1 || !numberOfPosts)
+  else if (numberOfPosts < 10 || !numberOfPosts)
   {
-    numberOfPosts = 1;
+    numberOfPosts = 10;
   }
 	
   return numberOfPosts;
 }
 
-module.exports = new RedditClient();
+/**
+ * Simple wrapper to try and parse JSON using 'JSON'. 
+ * Will rethrow any exception along with logging the data we failed to parse
+ */
+function parseJSON(data) {
+  try {
+    const jsonData = JSON.parse(data);
+    return jsonData;
+  } catch(e) {
+    console.error('Failed to parse json data! Data we failed to parse:');
+    console.error(data);
+    throw e;
+  }
+}

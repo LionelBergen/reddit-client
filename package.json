@@ -27,7 +27,9 @@
     "api",
     "reddit-api",
     "reddit-bot",
-    "reddit-api"
+    "ecmascript-2016",
+    "async",
+    "2024"
   ],
   "bugs": {
     "url": "https://github.com/LionelBergen/reddit-client/issues"

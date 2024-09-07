@@ -1,4 +1,4 @@
-class RedditPost {
+export default class RedditPost {
   constructor(properties) {
     for(let property in properties) {
       this[property] = properties[property];
@@ -19,5 +19,3 @@ class RedditPost {
     return result;
   }
 }
-
-module.exports = RedditPost;
