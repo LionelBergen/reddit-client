@@ -4,12 +4,27 @@ import { getDataFromUrl } from './util/http.js';
 
 const SUBREDDIT_URL = "https://ssl.reddit.com/r/";
 // This is the max number of posts Reddit allows to be retrieved at once. If a higher number is used, this is used anyway
-const MAX_NUM_POSTS = 100;
+export const MAX_NUM_POSTS = 100;
+// For some reason, 1-9 doesnt return anything
+export const MIN_NUM_POSTS = 10;
+
+/**
+ * Returns posts from subreddit
+ *
+ * @param numberOfPosts number of posts to retrieve, between 1-100
+ * @param subreddit subreddit to get posts from
+ * @param sortType E.G 'new', or 'hot'
+ * @return Promise containing a list of RedditPost objects
+*/
+export async function getPostsFromSubreddit(numberOfPosts, subreddit, sortType) {
+  numberOfPosts = getValidNumberOfPosts(numberOfPosts);
+  const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
+
+  return await getPostsFromURL(url);
+}
 
 export default class RedditClient
 {
-  get MAX_NUM_POSTS() { return MAX_NUM_POSTS; }
-  
   /**
    * Returns posts from subreddit
    *
@@ -23,7 +38,6 @@ export default class RedditClient
     const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
 
     return new Promise(function(resolve, reject) {
-
       getPostsFromURL(url).then(resolve).catch(reject);
     });
   }
@@ -82,6 +96,7 @@ export default class RedditClient
 async function getCommentsFromURL(url)
 {
   const dataFromUrl = await getDataFromUrl(url);
+  console.log(dataFromUrl)
   const postObjects = getPostObjectsFromRawURLData(dataFromUrl);
 
   return postObjects;
@@ -105,25 +120,30 @@ function getPostsFromURL(url)
 function getPostObjectsFromRawURLData(rawDataFromURL)
 {
   const jsonDataFromUrl = parseJSON(rawDataFromURL);
-  
-  return jsonDataFromUrl.data.children.map(post => 
+
+  const result = jsonDataFromUrl.data.children.map(post => 
   {
     post = post.data;
+    console.log(post);
     return new RedditPost({
-      body: post.selftext,
+      body: post.body,
       subreddit: post.subreddit,
       authorFullname: post.author_fullname,
-      postTitle: post.title,
+      postTitle: post.link_title,
       name: post.name,
       ups: post.ups,
       score: post.score,
       created: post.created_utc,
       id: post.id,
       author: post.author,
-      url: post.url,
-      permalink: post.permalink
+      permalink: post.permalink,
+      url: 'https://www.reddit.com' + post.permalink
     });
   });
+
+  console.log(result);
+
+  return result;
 }
 
 /**
@@ -174,9 +194,9 @@ function getValidNumberOfPosts(numberOfPosts)
   {
     numberOfPosts = MAX_NUM_POSTS;
   }
-  else if (numberOfPosts < 10 || !numberOfPosts)
+  else if (numberOfPosts < MIN_NUM_POSTS || !numberOfPosts)
   {
-    numberOfPosts = 10;
+    numberOfPosts = MIN_NUM_POSTS;
   }
 	
   return numberOfPosts;
