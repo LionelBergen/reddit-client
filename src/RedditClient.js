@@ -1,4 +1,5 @@
 import { getDataFromUrl } from './util/http.js';
+import parseJSON from './util/parse-json.js';
 import parsePostArray from './util/reddit-parser.js';
 
 const SUBREDDIT_URL = "https://ssl.reddit.com/r/";
@@ -21,43 +22,23 @@ export async function getPostsFromSubreddit(numberOfPosts, subreddit, sortType) 
   return await getPostsFromURL(url);
 }
 
+/**
+ * Gets a list of the names of moderators for the subreddit
+ *
+ * @param subreddit
+ * @return Promise containing list of moderator usernames
+*/
+export async function getSubredditModList(subreddit)
+{
+  throw 'UNIMPLEMENTED. Requires Authentication.';
+  /* const url = 'https://ssl.reddit.com/r/' + subreddit + '/about/moderators.json';
+  const data = await getDataFromUrl(url);
+  const jsonData = parseJSON(data);
+  console.log(jsonData); */
+}
+
 export class RedditClient
 {
-  /**
-   * Gets a list of the names of moderators for the subreddit
-   *
-   * @param subreddit
-   * @return Promise containing list of moderator usernames
-  */
-  getSubredditModList(subreddit)
-  {
-    return new Promise(function(resolve, reject) {
-      const url = SUBREDDIT_URL + subreddit + '/about/moderators.json?';
-      // console.debug('trying get mod list from url : ' + subreddit + ' url: ' + url);
-      https.get(url, (res) => {
-        let message = '';
-        res.on('data', (d) => {
-          message += d;
-        });
-        
-        res.on('end',function(){
-          if (res.statusCode != 200) 
-          {
-            reject("Api call failed with response code " + res.statusCode);
-          } 
-          else 
-          {
-            let messages = JSON.parse(message).data.children;
-            let modNamesCommaDelimitedList = messages.map(function(m) { return m.name; });
-            resolve(modNamesCommaDelimitedList);
-          }
-        });
-      }).on('error', (e) => {
-        reject('error getting subreddit', e, ('subreddit is: ' + subreddit));
-      });
-    });
-  }
-	
   /**
    * Get a list of the newest comments from Reddit
    *
@@ -158,19 +139,4 @@ function getValidNumberOfPosts(numberOfPosts)
   }
 	
   return numberOfPosts;
-}
-
-/**
- * Simple wrapper to try and parse JSON using 'JSON'. 
- * Will rethrow any exception along with logging the data we failed to parse
- */
-function parseJSON(data) {
-  try {
-    const jsonData = JSON.parse(data);
-    return jsonData;
-  } catch(e) {
-    console.error('Failed to parse json data! Data we failed to parse:');
-    console.error(data);
-    throw e;
-  }
 }
