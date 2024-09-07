@@ -1,12 +1,10 @@
-import RedditComment from './classes/RedditComment.js';
-import RedditPost from './classes/RedditPost.js';
 import { getDataFromUrl } from './util/http.js';
+import parsePostArray from './util/reddit-parser.js';
 
 const SUBREDDIT_URL = "https://ssl.reddit.com/r/";
 // This is the max number of posts Reddit allows to be retrieved at once. If a higher number is used, this is used anyway
 export const MAX_NUM_POSTS = 100;
-// For some reason, 1-9 doesnt return anything
-export const MIN_NUM_POSTS = 10;
+export const MIN_NUM_POSTS = 1;
 
 /**
  * Returns posts from subreddit
@@ -23,25 +21,8 @@ export async function getPostsFromSubreddit(numberOfPosts, subreddit, sortType) 
   return await getPostsFromURL(url);
 }
 
-export default class RedditClient
+export class RedditClient
 {
-  /**
-   * Returns posts from subreddit
-   *
-   * @param numberOfPosts number of posts to retrieve, between 1-100
-   * @param subreddit subreddit to get posts from
-   * @param sortType E.G 'new', or 'hot'
-   * @return Promise containing a list of RedditPost objects
-  */
-  getPostsFromSubreddit(numberOfPosts, subreddit, sortType) {
-    numberOfPosts = getValidNumberOfPosts(numberOfPosts);
-    const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
-
-    return new Promise(function(resolve, reject) {
-      getPostsFromURL(url).then(resolve).catch(reject);
-    });
-  }
-	
   /**
    * Gets a list of the names of moderators for the subreddit
    *
@@ -101,13 +82,11 @@ async function getCommentsFromURL(url)
   return postObjects;
 }
 
-function getPostsFromURL(url)
+async function getPostsFromURL(url)
 {
-  return new Promise(function(resolve, reject) {
-    getDataFromUrl(url).then(getPostObjectsFromRawURLData).then(resolve).catch(function(error) {  
-      reject('error thrown for url: ' + url + ' error: ' + error);
-    });
-  });
+  const data = await getDataFromUrl(url);
+
+  return getPostObjectsFromRawURLData(data);
 }
 
 /**
@@ -120,27 +99,7 @@ function getPostObjectsFromRawURLData(rawDataFromURL)
 {
   const jsonDataFromUrl = parseJSON(rawDataFromURL);
 
-  const result = jsonDataFromUrl.data.children.map(post => 
-  {
-    post = post.data;
-    console.log(post);
-    return new RedditPost({
-      body: post.body,
-      subreddit: post.subreddit,
-      authorFullname: post.author_fullname,
-      postTitle: post.link_title,
-      name: post.name,
-      ups: post.ups,
-      score: post.score,
-      created: post.created_utc,
-      id: post.id,
-      author: post.author,
-      permalink: post.permalink,
-      url: 'https://www.reddit.com' + post.permalink
-    });
-  });
-
-  console.log(result);
+  const result = jsonDataFromUrl.data.children.map(post => parsePostArray(post));
 
   return result;
 }
