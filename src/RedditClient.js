@@ -96,7 +96,6 @@ export default class RedditClient
 async function getCommentsFromURL(url)
 {
   const dataFromUrl = await getDataFromUrl(url);
-  console.log(dataFromUrl)
   const postObjects = getPostObjectsFromRawURLData(dataFromUrl);
 
   return postObjects;
