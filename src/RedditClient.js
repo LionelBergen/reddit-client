@@ -1,11 +1,14 @@
 import { getDataFromUrl } from './util/http.js';
 import parseJSON from './util/parse-json.js';
-import parsePostArray from './util/reddit-parser.js';
+import { parsePostArray, parseCommentArray } from './util/reddit-parser.js';
 
 const SUBREDDIT_URL = "https://ssl.reddit.com/r/";
 // This is the max number of posts Reddit allows to be retrieved at once. If a higher number is used, this is used anyway
 export const MAX_NUM_POSTS = 100;
 export const MIN_NUM_POSTS = 1;
+export const MAX_NUM_COMMENTS = 1000;
+export const MIN_NUM_COMMENTS = 10;
+
 
 /**
  * Returns posts from subreddit
@@ -36,31 +39,26 @@ export async function getSubredditModList(subreddit)
   const jsonData = parseJSON(data);
   console.log(jsonData); */
 }
-
-export class RedditClient
+/**
+ * Get a list of the newest comments from Reddit
+ *
+ * @param numberOfComments A number between 10-100 (between 1-9 does not work for Reddit). Defaults to 100
+ * @return List of comment objects
+*/
+export async function getLatestCommentsFromReddit(numberOfComments = 100)
 {
-  /**
-   * Get a list of the newest comments from Reddit
-   *
-   * @param numberOfComments A number between 10-100 (between 1-9 does not work for Reddit). Defaults to 100
-   * @return List of comment objects
-  */
-  async getLatestCommentsFromReddit(numberOfComments = 100)
-  {
-    numberOfComments = getValidNumberOfPosts(numberOfComments);
-    const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
-    const latestComments = await getCommentsFromURL(url);
+  numberOfComments = getValidNumberOfComments(numberOfComments);
+  const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
+  const latestComments = await getCommentsFromURL(url);
 
-    return latestComments;
-  }
+  return latestComments;
 }
 
 async function getCommentsFromURL(url)
 {
   const dataFromUrl = await getDataFromUrl(url);
-  const postObjects = getPostObjectsFromRawURLData(dataFromUrl);
 
-  return postObjects;
+  return getCommentObjectFromRawURLData(dataFromUrl);
 }
 
 async function getPostsFromURL(url)
@@ -93,36 +91,15 @@ function getPostObjectsFromRawURLData(rawDataFromURL)
 */
 function getCommentObjectFromRawURLData(rawDataFromURL)
 {
-  const jsonDataFromUrl = JSON.parse(rawDataFromURL);
-  
-  if (!jsonDataFromUrl) {
-    throw 'Cannot get JSON from rawdata: ' + rawDataFromURL;
-  } else if (!jsonDataFromUrl.data || !jsonDataFromUrl.data.children) {
-    throw 'Malformed data. Raw data was: ' + rawDataFromURL + ' json data was: ' + jsonDataFromUrl;
-  }
-  
-  return jsonDataFromUrl.data.children.map(comment => 
-  {
-    comment = comment.data;
-    return new RedditComment({
-      body: comment.body,
-      subreddit: comment.subreddit,
-      authorFullname: comment.author_fullname,
-      postTitle: comment.title,
-      name: comment.name,
-      ups: comment.ups,
-      score: comment.score,
-      created: comment.created_utc,
-      id: comment.id,
-      author: comment.author,
-      url: comment.link_url,
-      permalink: comment.permalink
-    });
-  });
+  const jsonDataFromUrl = parseJSON(rawDataFromURL);
+
+  const result = jsonDataFromUrl.data.children.map(post => parseCommentArray(post));
+
+  return result;
 }
 
 /**
- * This is what happens anyway. Reddit accepts numbers over 100 as 100 and less then 10 as 10
+ * This is what happens anyway. Reddit accepts numbers over 100 as 100 and less then 1 as 1
  * 
  * @param numberOfPosts
  * @return
@@ -139,4 +116,24 @@ function getValidNumberOfPosts(numberOfPosts)
   }
 	
   return numberOfPosts;
+}
+
+/**
+ * Reddit accepts numbers over 1000 as 1000 and less then 1 as 1
+ * 
+ * @param numberOfPosts
+ * @return
+ */
+function getValidNumberOfComments(numberOfComments) 
+{
+  if(numberOfComments > MAX_NUM_COMMENTS)
+  {
+    numberOfComments = MAX_NUM_COMMENTS;
+  }
+  else if (numberOfComments < MIN_NUM_COMMENTS || !numberOfComments)
+  {
+    numberOfComments = MIN_NUM_COMMENTS;
+  }
+	
+  return numberOfComments;
 }

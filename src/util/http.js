@@ -9,7 +9,7 @@ import https from 'https';
 export function getDataFromUrl(url)
 {
   // Reddit requires a user-agent
-  const agent = 'reddit-client/2.0.0 by Lionel Bergen';
+  const agent = 'u/dusty-trash reddit-client/2.0.0 by Lionel Bergen';
   const headers = { "user-agent": agent};
   const options = { headers: headers };
 
