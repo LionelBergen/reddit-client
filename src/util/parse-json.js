@@ -1,4 +1,4 @@
-import log from './log';
+import log from './log.js';
 
 /**
  * Simple wrapper to try and parse JSON using 'JSON'.

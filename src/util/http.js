@@ -3,7 +3,7 @@ import https from 'https';
 /**
  * Run a GET request on a URL and return all the data
  *
- * @param url URL to get data from
+ * @param url {string} URL to get data from
  * @return a promise containing data returned from the url
 */
 export function getDataFromUrl(url)
