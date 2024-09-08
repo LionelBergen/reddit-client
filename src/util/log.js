@@ -1,4 +1,6 @@
-import log from 'loglevel';
-log.setLevel('info');
+import logg from 'loglevel';
+logg.setLevel('info');
+
+export const log = logg;
 
 export default log;

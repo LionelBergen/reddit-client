@@ -24,7 +24,7 @@ export function parseCommentArray(rawResponse) {
     body: data.body,
     subreddit: data.subreddit,
     authorFullname: data.author_fullname,
-    postTitle: data.title,
+    postTitle: data.link_title,
     name: data.name,
     ups: data.ups,
     score: data.score,

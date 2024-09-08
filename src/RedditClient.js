@@ -1,4 +1,5 @@
 import { getDataFromUrl } from './util/http.js';
+import log from './util/log.js';
 import parseJSON from './util/parse-json.js';
 import { parsePostArray, parseCommentArray } from './util/reddit/reddit-parser.js';
 
@@ -49,6 +50,7 @@ export async function getLatestCommentsFromReddit(numberOfComments = 100)
 {
   numberOfComments = getValidNumberOfComments(numberOfComments);
   const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
+  log.debug(url);
   const latestComments = await getCommentsFromURL(url);
 
   return latestComments;
@@ -57,6 +59,7 @@ export async function getLatestCommentsFromReddit(numberOfComments = 100)
 async function getCommentsFromURL(url)
 {
   const dataFromUrl = await getDataFromUrl(url);
+  log.debug(dataFromUrl);
 
   return getCommentObjectFromRawURLData(dataFromUrl);
 }
@@ -64,6 +67,7 @@ async function getCommentsFromURL(url)
 async function getPostsFromURL(url)
 {
   const data = await getDataFromUrl(url);
+  log.debug(data);
 
   return getPostObjectsFromRawURLData(data);
 }
