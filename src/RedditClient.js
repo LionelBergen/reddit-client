@@ -41,6 +41,7 @@ export async function getSubredditModList(subreddit)
   const jsonData = parseJSON(data);
   console.log(jsonData); */
 }
+
 /**
  * Get a list of the newest comments from Reddit
  *

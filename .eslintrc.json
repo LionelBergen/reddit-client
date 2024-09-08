@@ -19,6 +19,10 @@
 		"prefer-const": 2,
 		"no-var": 2,
 		"eol-last": 2,
-		"no-trailing-spaces": 2
+		"no-trailing-spaces": 2,
+		"padding-line-between-statements": [
+			"error",
+			{ "blankLine": "always", "prev": "block-like", "next": "*"}
+		]
 	}
 }
