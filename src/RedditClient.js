@@ -32,8 +32,7 @@ export async function getPostsFromSubreddit(numberOfPosts, subreddit, sortType) 
  * @return Promise containing list of moderator usernames
 */
 // eslint-disable-next-line
-export async function getSubredditModList(subreddit)
-{
+export async function getSubredditModList(subreddit) {
   throw 'UNIMPLEMENTED. Requires Authentication.';
   /* const url = 'https://ssl.reddit.com/r/' + subreddit + '/about/moderators.json';
   const data = await getDataFromUrl(url);
@@ -47,8 +46,7 @@ export async function getSubredditModList(subreddit)
  * @param numberOfComments A number between 10-100 (between 1-9 does not work for Reddit). Defaults to 100
  * @return List of comment objects
 */
-export async function getLatestCommentsFromReddit(numberOfComments = 100)
-{
+export async function getLatestCommentsFromReddit(numberOfComments = 100) {
   numberOfComments = getValidNumberOfComments(numberOfComments);
   const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
   log.debug(url);
@@ -57,16 +55,14 @@ export async function getLatestCommentsFromReddit(numberOfComments = 100)
   return latestComments;
 }
 
-async function getCommentsFromURL(url)
-{
+async function getCommentsFromURL(url) {
   const dataFromUrl = await getDataFromUrl(url);
   log.debug(dataFromUrl);
 
   return getCommentObjectFromRawURLData(dataFromUrl);
 }
 
-async function getPostsFromURL(url)
-{
+async function getPostsFromURL(url) {
   const data = await getDataFromUrl(url);
   log.debug(data);
 
@@ -79,8 +75,7 @@ async function getPostsFromURL(url)
  * @param rawDataFromURL Data from a Reddit URL, containing all the comment info
  * @return An array of Post objects containing body, subreddit etc
 */
-function getPostObjectsFromRawURLData(rawDataFromURL)
-{
+function getPostObjectsFromRawURLData(rawDataFromURL) {
   const jsonDataFromUrl = parseJSON(rawDataFromURL);
 
   const result = jsonDataFromUrl.data.children.map(post => parsePostArray(post));
@@ -94,8 +89,7 @@ function getPostObjectsFromRawURLData(rawDataFromURL)
  * @param rawDataFromURL Data from a Reddit URL, containing all the comment info
  * @return A Comment object containing body, subreddit etc
 */
-function getCommentObjectFromRawURLData(rawDataFromURL)
-{
+function getCommentObjectFromRawURLData(rawDataFromURL) {
   const jsonDataFromUrl = parseJSON(rawDataFromURL);
 
   const result = jsonDataFromUrl.data.children.map(post => parseCommentArray(post));
@@ -109,14 +103,10 @@ function getCommentObjectFromRawURLData(rawDataFromURL)
  * @param numberOfPosts
  * @return
  */
-function getValidNumberOfPosts(numberOfPosts)
-{
-  if(numberOfPosts > MAX_NUM_POSTS)
-  {
+function getValidNumberOfPosts(numberOfPosts) {
+  if(numberOfPosts > MAX_NUM_POSTS) {
     numberOfPosts = MAX_NUM_POSTS;
-  }
-  else if (numberOfPosts < MIN_NUM_POSTS || !numberOfPosts)
-  {
+  } else if (numberOfPosts < MIN_NUM_POSTS || !numberOfPosts) {
     numberOfPosts = MIN_NUM_POSTS;
   }
 
@@ -129,14 +119,10 @@ function getValidNumberOfPosts(numberOfPosts)
  * @param numberOfPosts
  * @return
  */
-function getValidNumberOfComments(numberOfComments)
-{
-  if(numberOfComments > MAX_NUM_COMMENTS)
-  {
+function getValidNumberOfComments(numberOfComments) {
+  if(numberOfComments > MAX_NUM_COMMENTS) {
     numberOfComments = MAX_NUM_COMMENTS;
-  }
-  else if (numberOfComments < MIN_NUM_COMMENTS || !numberOfComments)
-  {
+  } else if (numberOfComments < MIN_NUM_COMMENTS || !numberOfComments) {
     numberOfComments = MIN_NUM_COMMENTS;
   }
 

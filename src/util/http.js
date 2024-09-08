@@ -9,16 +9,14 @@ const DEFAULT_USER_AGENT = 'u/dusty-trash reddit-client/2.0.0 by Lionel Bergen';
  * @param userAgent {string | DEFAULT_USER_AGENT} user agent for the http client
  * @return a promise containing data returned from the url
 */
-export function getDataFromUrl(url, userAgent)
-{
+export function getDataFromUrl(url, userAgent) {
   // Reddit requires a user-agent
   const agent = userAgent | DEFAULT_USER_AGENT;
   const headers = { "user-agent": agent};
   const options = { headers: headers };
 
   return new Promise(function(resolve, reject) {
-    https.get(url, options, (resp) =>
-    {
+    https.get(url, options, (resp) => {
       let data = '';
 
       // A chunk of data has been recieved.

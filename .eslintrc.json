@@ -33,6 +33,10 @@
 			"error",
 			"loglevel",
 			"log"
+		],
+		"brace-style": [
+			"error",
+			"1tbs"
 		]
 	},
 	"overrides": [
