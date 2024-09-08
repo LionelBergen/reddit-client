@@ -28,6 +28,24 @@
 			"error",
 			{ "max": 1 }
 		],
-		"spaced-comment": "error"
-	}
+		"spaced-comment": "error",
+		"no-restricted-imports": [
+			"error",
+			"loglevel",
+			"log"
+		]
+	},
+	"overrides": [
+    {
+      "files": [
+        "src/util/log.js"
+      ],
+			"rules": {
+				"no-restricted-imports": [
+					"off", 
+					"loglevel"
+				]
+			}
+	  }
+	]
 }
