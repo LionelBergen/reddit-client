@@ -1,15 +1,18 @@
 import https from 'https';
 
+const DEFAULT_USER_AGENT = 'u/dusty-trash reddit-client/2.0.0 by Lionel Bergen';
+
 /**
  * Run a GET request on a URL and return all the data
  *
  * @param url {string} URL to get data from
+ * @param userAgent {string | DEFAULT_USER_AGENT} user agent for the http client
  * @return a promise containing data returned from the url
 */
-export function getDataFromUrl(url)
+export function getDataFromUrl(url, userAgent)
 {
   // Reddit requires a user-agent
-  const agent = 'u/dusty-trash reddit-client/2.0.0 by Lionel Bergen';
+  const agent = userAgent | DEFAULT_USER_AGENT;
   const headers = { "user-agent": agent};
   const options = { headers: headers };
 
