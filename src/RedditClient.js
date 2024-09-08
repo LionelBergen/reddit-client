@@ -1,6 +1,6 @@
 import { getDataFromUrl } from './util/http.js';
 import parseJSON from './util/parse-json.js';
-import { parsePostArray, parseCommentArray } from './util/reddit-parser.js';
+import { parsePostArray, parseCommentArray } from './util/reddit/reddit-parser.js';
 
 const SUBREDDIT_URL = "https://ssl.reddit.com/r/";
 // This is the max number of posts Reddit allows to be retrieved at once. If a higher number is used, this is used anyway
