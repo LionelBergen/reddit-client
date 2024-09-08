@@ -13,9 +13,9 @@
   "author": "Lionel Bergen",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^7.10.0",
-    "eslint-config-strongloop": "^2.1.0",
-    "mocha": "^8.2.1",
+    "eslint": "8.57.0",
+    "eslint-config-strongloop": "2.1.0",
+    "mocha": "10.7.3",
     "mock-https": "^1.0.6"
   },
   "repository": {
