@@ -105,11 +105,11 @@ function getCommentObjectFromRawURLData(rawDataFromURL)
 
 /**
  * This is what happens anyway. Reddit accepts numbers over 100 as 100 and less then 1 as 1
- * 
+ *
  * @param numberOfPosts
  * @return
  */
-function getValidNumberOfPosts(numberOfPosts) 
+function getValidNumberOfPosts(numberOfPosts)
 {
   if(numberOfPosts > MAX_NUM_POSTS)
   {
@@ -119,17 +119,17 @@ function getValidNumberOfPosts(numberOfPosts)
   {
     numberOfPosts = MIN_NUM_POSTS;
   }
-	
+
   return numberOfPosts;
 }
 
 /**
  * Reddit accepts numbers over 1000 as 1000 and less then 1 as 1
- * 
+ *
  * @param numberOfPosts
  * @return
  */
-function getValidNumberOfComments(numberOfComments) 
+function getValidNumberOfComments(numberOfComments)
 {
   if(numberOfComments > MAX_NUM_COMMENTS)
   {
@@ -139,6 +139,6 @@ function getValidNumberOfComments(numberOfComments)
   {
     numberOfComments = MIN_NUM_COMMENTS;
   }
-	
+
   return numberOfComments;
 }

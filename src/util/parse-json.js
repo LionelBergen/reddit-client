@@ -1,7 +1,7 @@
 import log from './log';
 
 /**
- * Simple wrapper to try and parse JSON using 'JSON'. 
+ * Simple wrapper to try and parse JSON using 'JSON'.
  * Will rethrow any exception along with logging the data we failed to parse
  */
 export default function parseJSON(data) {

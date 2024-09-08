@@ -14,7 +14,7 @@ export function getDataFromUrl(url)
   const options = { headers: headers };
 
   return new Promise(function(resolve, reject) {
-    https.get(url, options, (resp) => 
+    https.get(url, options, (resp) =>
     {
       let data = '';
 

@@ -19,7 +19,7 @@ describe('RedditComment class', () => {
       permalink: 'permalink'
     });
     const expectedToString = 'body: body of comment, subreddit: subreddit here, authorFullname: dustytrash, postTitle: my comment, name: comment name, ups: 55, score: 666, created: 123456789, id: 55555, author: dustytrash, url: /r/learnprogramming/something/, permalink: permalink';
-    
+
     assert.ok(redditComment);
     assert.equal(expectedToString, redditComment.toString());
   });
@@ -42,7 +42,7 @@ describe('RedditPost class', () => {
       permalink: 'permalink'
     });
     const expectedToString = 'body: body of comment, subreddit: subreddit here, authorFullname: dustytrash, postTitle: my comment, name: comment name, ups: 55, score: 666, created: 123456789, id: 55555, author: dustytrash, url: /r/learnprogramming/something/, permalink: permalink';
-    
+
     assert.ok(redditPost);
     assert.equal(expectedToString, redditPost.toString());
   });
