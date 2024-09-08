@@ -32,6 +32,7 @@ export async function getPostsFromSubreddit(numberOfPosts, subreddit, sortType) 
  * @param subreddit
  * @return Promise containing list of moderator usernames
 */
+// eslint-disable-next-line
 export async function getSubredditModList(subreddit)
 {
   throw 'UNIMPLEMENTED. Requires Authentication.';
