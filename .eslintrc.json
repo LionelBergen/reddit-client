@@ -14,6 +14,7 @@
 	  "indent": ["error", 2],
 		"linebreak-style": ["error", "unix"],
 		"semi": ["error", "always"],
+		"max-len": ["error", { "code": 120, "ignoreComments": true }],
 		"no-undef": 1,
     "no-console": 2,
 		"prefer-const": 2,
@@ -50,6 +51,14 @@
 					"loglevel"
 				]
 			}
-	  }
+	  },
+		{
+			"files": [
+				"test/**/*"
+			],
+			"rules": {
+				"max-len": "off"
+			}
+		}
 	]
 }
