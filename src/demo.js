@@ -1,5 +1,5 @@
 import log from './util/log.js';
-import { getLatestCommentsFromReddit} from './RedditClient.js';
+import { getLatestCommentsFromReddit } from './RedditClient.js';
 
 (async () => {
 

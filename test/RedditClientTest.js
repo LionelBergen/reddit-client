@@ -43,6 +43,7 @@ describe('Get Number Of Posts', () => {
   });
 
   it('should be final/immutable', () => {
+    // eslint-disable-next-line no-import-assign
     MAX_NUM_POSTS = 101;
     assert.equal(100, MAX_NUM_POSTS);
   });
