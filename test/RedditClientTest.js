@@ -1,7 +1,7 @@
-const RedditClient = require('../src/RedditClient.js');
-const assert = require('assert');
-const mockhttps = require('mock-https');
-const fs = require('fs');
+import assert from 'assert';
+import mockhttps from 'mock-https';
+import fs from 'fs';
+import { getLatestCommentsFromReddit, getPostsFromSubreddit, getSubredditModList, MAX_NUM_POSTS } from '../src/RedditClient.js';
 
 let mockResponseForPostsCall;
 let mockResponseForModListCall;
@@ -39,12 +39,12 @@ afterEach(function() {
 
 describe('Get Number Of Posts', () => {
   it('should return 100', () => {
-    assert.equal(100, RedditClient.MAX_NUM_POSTS);
+    assert.equal(100, MAX_NUM_POSTS);
   });
 
   it('should be final/immutable', () => {
-    RedditClient.MAX_NUM_POSTS = 101;
-    assert.equal(100, RedditClient.MAX_NUM_POSTS);
+    MAX_NUM_POSTS = 101;
+    assert.equal(100, MAX_NUM_POSTS);
   });
 });
 
@@ -52,7 +52,7 @@ describe('get posts from subreddit', () => {
   it('should return a single valid post object', async () => {
     mockhttps.expectGet('https://www.reddit.com/r/LearnProgramming/new.json?limit=1', mockResponseForPostsCall);
 
-    const result = await RedditClient.getPostsFromSubreddit(1, 'LearnProgramming', 'new');
+    const result = await getPostsFromSubreddit(1, 'LearnProgramming', 'new');
     assert.equal(1, result.length);
     assert.equal("learnprogramming", result[0].subreddit);
     assert.equal("Grokking the Object Oriented Design Case Studies in Java", result[0].postTitle);
@@ -65,13 +65,13 @@ describe('get posts from subreddit', () => {
   it('sort type calls different url', async () => {
     mockhttps.expectGet('https://www.reddit.com/r/Programming/hot.json?limit=10', mockResponseForPostsCall);
 
-    await RedditClient.getPostsFromSubreddit(10, 'Programming', 'hot');
+    await getPostsFromSubreddit(10, 'Programming', 'hot');
   });
 
   it('limit set to 100 if over 100', async () => {
     mockhttps.expectGet('https://www.reddit.com/r/Programming/hot.json?limit=100', mockResponseForPostsCall);
 
-    await RedditClient.getPostsFromSubreddit(100000, 'Programming', 'hot');
+    await getPostsFromSubreddit(100000, 'Programming', 'hot');
   });
 });
 
@@ -79,7 +79,7 @@ describe('get moderators of subreddit', () => {
   it('should return a single valid post object', async () => {
     mockhttps.expectGet('https://www.reddit.com/r/LearnProgramming/about/moderators.json?', mockResponseForModListCall);
 
-    const result = await RedditClient.getSubredditModList('LearnProgramming');
+    const result = await getSubredditModList('LearnProgramming');
     assert.equal(8, result.length);
     assert.ok(result.includes('trpcicm'));
     assert.ok(result.includes('desrtfx'));
@@ -96,7 +96,7 @@ describe('get latest comments from reddit', () => {
   it('get list of comments from reddit', async () => {
     mockhttps.expectGet('https://www.reddit.com/r/all/comments.json?limit=100', mockResponseForCommentsList);
 
-    const result = await RedditClient.getLatestCommentsFromReddit(100);
+    const result = await getLatestCommentsFromReddit(100);
     assert.equal(100, result.length);
 
     for (let i=0; i<100; i++) {
