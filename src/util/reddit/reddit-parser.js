@@ -17,7 +17,6 @@ export function parsePostArray(rawResponse) {
   };
 }
 
-
 export function parseCommentArray(rawResponse) {
   const data = rawResponse.data || rawResponse;
   return {

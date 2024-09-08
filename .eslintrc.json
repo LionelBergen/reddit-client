@@ -23,6 +23,10 @@
 		"padding-line-between-statements": [
 			"error",
 			{ "blankLine": "always", "prev": "block-like", "next": "*"}
+		],
+		"no-multiple-empty-lines": [
+			"error",
+			{ "max": 1 }
 		]
 	}
 }

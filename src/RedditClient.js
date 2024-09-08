@@ -10,7 +10,6 @@ export const MIN_NUM_POSTS = 1;
 export const MAX_NUM_COMMENTS = 1000;
 export const MIN_NUM_COMMENTS = 10;
 
-
 /**
  * Returns posts from subreddit
  *
