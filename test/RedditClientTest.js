@@ -8,7 +8,7 @@ let mockResponseForModListCall;
 let mockResponseForCommentsList;
 const numberOfTestResources = 3;
 
-before(function(done){
+before(function(done) {
   let numberOfLoadedResources = 0;
 
   fs.readFile('./test/resources/response_from_reddit_newest_posts.json', 'utf8', function(err, fileContents) {
