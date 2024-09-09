@@ -16,7 +16,7 @@
     "eslint": "8.57.0",
     "eslint-config-strongloop": "2.1.0",
     "mocha": "10.7.3",
-    "mock-https": "^1.0.6"
+    "mock-https": "^1.1.0"
   },
   "repository": {
     "type": "git",
