@@ -21,6 +21,14 @@
 		"no-var": 2,
 		"eol-last": 2,
 		"no-trailing-spaces": 2,
+		"space-before-function-paren": [
+			"error", 
+			{
+				"anonymous": "never",
+				"named": "never",
+				"asyncArrow": "always"
+			}
+		],
 		"padding-line-between-statements": [
 			"error",
 			{ "blankLine": "always", "prev": "block-like", "next": "*"}
