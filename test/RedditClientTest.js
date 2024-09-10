@@ -47,7 +47,7 @@ describe('get posts from subreddit', () => {
   it('should return a single valid post object', async () => {
     mockhttps.expectGet('https://ssl.reddit.com/r/LearnProgramming/new.json?limit=1', mockResponseForPostsCall);
 
-    const result = await getPostsFromSubreddit(1, 'LearnProgramming', 'new');
+    const result = await getPostsFromSubreddit({ numberOfPosts: 1, subreddit: 'LearnProgramming', sortType: 'new' });
     assert.equal(1, result.length);
     assert.equal("learnprogramming", result[0].subreddit);
     assert.equal("Grokking the Object Oriented Design Case Studies in Java", result[0].postTitle);
@@ -60,25 +60,25 @@ describe('get posts from subreddit', () => {
   it('sort type calls different url', async () => {
     mockhttps.expectGet('https://ssl.reddit.com/r/Programming/hot.json?limit=10', mockResponseForPostsCall);
 
-    await getPostsFromSubreddit(10, 'Programming', 'hot');
+    await getPostsFromSubreddit({ numberOfPosts: 10, subreddit: 'Programming', sortType: 'hot' });
   });
 
   it('limit set to 100 if over 100', async () => {
     mockhttps.expectGet('https://ssl.reddit.com/r/Programming/hot.json?limit=100', mockResponseForPostsCall);
 
-    await getPostsFromSubreddit(100000, 'Programming', 'hot');
+    await getPostsFromSubreddit({ numberOfPosts: 100000, subreddit: 'Programming', sortType: 'hot' });
   });
 
   it('limit set to 1 if under 1', async () => {
     mockhttps.expectGet('https://ssl.reddit.com/r/Programming/hot.json?limit=1', mockResponseForPostsCall);
 
-    await getPostsFromSubreddit(0, 'Programming', 'hot');
+    await getPostsFromSubreddit({ numberOfPosts: 0, subreddit: 'Programming', sortType: 'hot' });
   });
 
   it('limit set to 1 if blank', async () => {
     mockhttps.expectGet('https://ssl.reddit.com/r/Programming/hot.json?limit=1', mockResponseForPostsCall);
 
-    await getPostsFromSubreddit(null, 'Programming', 'hot');
+    await getPostsFromSubreddit({ subreddit: 'Programming', sortType: 'hot' });
   });
 });
 

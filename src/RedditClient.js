@@ -1,3 +1,5 @@
+import { redditOptions } from './reddit/reddit-options.js';
+import { SORT_TYPE } from './reddit/sort-type.js';
 import { getDataFromUrl } from './util/http.js';
 import log from './util/log.js';
 import parseJSON from './util/parse-json.js';
@@ -19,29 +21,38 @@ const REDDIT_OBJECT = {
 /**
  * Returns posts from subreddit
  *
- * @param numberOfPosts number of posts to retrieve, between 1-100
- * @param subreddit subreddit to get posts from
- * @param sortType E.G 'new', or 'hot'
+ * @param numberOfPosts {int | MIN_NUM_POSTS} number of posts to retrieve, between 1-100
+ * @param subreddit {string} subreddit to get posts from
+ * @param sortType {SORT_TYPE | SORT_TYPE.NEW} E.G 'new', or 'hot'
  * @return Promise containing a list of RedditPost objects
 */
-export async function getPostsFromSubreddit(numberOfPosts, subreddit, sortType) {
+export async function getPostsFromSubreddit({
+  numberOfPosts = MIN_NUM_POSTS,
+  subreddit,
+  sortType = SORT_TYPE.NEW,
+  options = redditOptions
+}) {
   numberOfPosts = getValidNumberOfPosts(numberOfPosts);
   const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
 
-  return await getRedditObjectFromURL(url, REDDIT_OBJECT.POST);
+  return await getRedditObjectFromURL(url, REDDIT_OBJECT.POST, options.USE_SIMPLE_RETURN_VALUES);
 }
 
 /**
  * Get a list of the newest comments from Reddit
  *
- * @param numberOfComments A number between 10-1000 (between 1-9 does not work for Reddit). Defaults to 1000
+ * @param numberOfComments {int | MAX_NUM_COMMENTS} A number between 10-1000 (between 1-9 does not work for Reddit)
+ * @param options {redditOptions} reddit options
  * @return List of comment objects
 */
-export async function getLatestCommentsFromReddit({ numberOfComments = MAX_NUM_COMMENTS } = {}) {
+export async function getLatestCommentsFromReddit({
+  numberOfComments = MAX_NUM_COMMENTS,
+  options = redditOptions
+} = {}) {
   numberOfComments = getValidNumberOfComments(numberOfComments);
   const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
   log.debug(url);
-  const latestComments = await getRedditObjectFromURL(url, REDDIT_OBJECT.COMMENT);
+  const latestComments = await getRedditObjectFromURL(url, REDDIT_OBJECT.COMMENT, options.USE_SIMPLE_RETURN_VALUES);
 
   return latestComments;
 }
@@ -61,15 +72,15 @@ export async function getSubredditModList(subreddit) {
   console.log(jsonData); */
 }
 
-async function getRedditObjectFromURL(url, redditType) {
+async function getRedditObjectFromURL(url, redditType, useSimpleObjects = false) {
   const dataFromUrl = await getDataFromUrl(url);
   log.debug(dataFromUrl);
 
   switch(redditType) {
     case REDDIT_OBJECT.COMMENT:
-      return getCommentObjectFromRawURLData(dataFromUrl);
+      return getCommentObjectFromRawURLData(dataFromUrl, useSimpleObjects);
     case REDDIT_OBJECT.POST:
-      return getPostObjectsFromRawURLData(dataFromUrl);
+      return getPostObjectsFromRawURLData(dataFromUrl, useSimpleObjects);
   }
 }
 
@@ -77,31 +88,38 @@ async function getRedditObjectFromURL(url, redditType) {
  * Returns an object based on the data returned from a Reddit URL.
  *
  * @param rawDataFromURL Data from a Reddit URL, containing all the comment info
+ * @param {boolean | false} useSimpleValues
  * @return An array of Post objects containing body, subreddit etc
 */
-function getPostObjectsFromRawURLData(rawDataFromURL) {
-  return getObjectFromRawData(rawDataFromURL, REDDIT_OBJECT.POST);
+function getPostObjectsFromRawURLData(rawDataFromURL, useSimpleObjects = false) {
+  return getObjectFromRawData(rawDataFromURL, REDDIT_OBJECT.POST, useSimpleObjects);
 }
 
 /**
  * Returns an object based on the data returned from a Reddit URL.
  *
  * @param rawDataFromURL Data from a Reddit URL, containing all the comment info
+ * @param {boolean | false} useSimpleValues
  * @return A Comment object containing body, subreddit etc
 */
-function getCommentObjectFromRawURLData(rawDataFromURL) {
-  return getObjectFromRawData(rawDataFromURL, REDDIT_OBJECT.COMMENT);
+function getCommentObjectFromRawURLData(rawDataFromURL, useSimpleObjects = false) {
+  return getObjectFromRawData(rawDataFromURL, REDDIT_OBJECT.COMMENT, useSimpleObjects);
 }
 
 /**
  *
  * @param {string} rawDataFromURL
  * @param {REDDIT_OBJECT} redditType
+ * @param {boolean | false} useSimpleValues
  */
-function getObjectFromRawData(rawDataFromURL, redditType) {
+function getObjectFromRawData(rawDataFromURL, redditType, useSimpleValues = false) {
   const jsonDataFromUrl = parseJSON(rawDataFromURL);
 
   const result = jsonDataFromUrl.data.children.map(post => {
+    if (!useSimpleValues) {
+      return post.data;
+    }
+
     switch (redditType) {
       case REDDIT_OBJECT.COMMENT:
         return parseCommentArray(post);
