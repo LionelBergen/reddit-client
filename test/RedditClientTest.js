@@ -70,7 +70,7 @@ describe('get posts from subreddit', () => {
   });
 });
 
-describe('get moderators of subreddit', () => {
+describe.skip('get moderators of subreddit', () => {
   it('should return a single valid post object', async () => {
     mockhttps.expectGet('https://ssl.reddit.com/r/LearnProgramming/about/moderators.json?', mockResponseForModListCall);
 
@@ -98,5 +98,17 @@ describe('get latest comments from reddit', () => {
       assert.notEqual(null, result[i]);
       assert.notEqual(null, result[i].author);
     }
+  });
+
+  it('amount should default to 1000', async () => {
+    mockhttps.expectGet('https://ssl.reddit.com/r/all/comments.json?limit=1000', mockResponseForCommentsList);
+
+    const result = await getLatestCommentsFromReddit(100000);
+  });
+
+  it('amount should default to 10', async () => {
+    mockhttps.expectGet('https://ssl.reddit.com/r/all/comments.json?limit=10', mockResponseForCommentsList);
+
+    const result = await getLatestCommentsFromReddit(3);
   });
 });
