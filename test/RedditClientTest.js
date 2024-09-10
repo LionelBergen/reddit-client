@@ -103,7 +103,7 @@ describe('get latest comments from reddit', () => {
   it('get list of comments from reddit', async () => {
     mockhttps.expectGet('https://ssl.reddit.com/r/all/comments.json?limit=100', mockResponseForCommentsList);
 
-    const result = await getLatestCommentsFromReddit(100);
+    const result = await getLatestCommentsFromReddit({ numberOfComments: 100 });
     assert.equal(100, result.length);
 
     for (let i=0; i<100; i++) {
@@ -115,13 +115,13 @@ describe('get latest comments from reddit', () => {
   it('amount should default to 1000', async () => {
     mockhttps.expectGet('https://ssl.reddit.com/r/all/comments.json?limit=1000', mockResponseForCommentsList);
 
-    await getLatestCommentsFromReddit(100000);
+    await getLatestCommentsFromReddit({ numberOfComments: 100000 });
   });
 
   it('amount should default to 10', async () => {
     mockhttps.expectGet('https://ssl.reddit.com/r/all/comments.json?limit=10', mockResponseForCommentsList);
 
-    await getLatestCommentsFromReddit(3);
+    await getLatestCommentsFromReddit({ numberOfComments: 3 });
   });
 
   it('amount should default to 1000', async () => {

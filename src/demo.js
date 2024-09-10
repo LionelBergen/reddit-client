@@ -5,7 +5,7 @@ import { getLatestCommentsFromReddit } from './RedditClient.js';
   // log.setLevel('debug');
   // const postsList = await getPostsFromSubreddit(1, 'test', 'new');
   // const modList = await getSubredditModList('test');
-  const commentsList = await getLatestCommentsFromReddit(20);
+  const commentsList = await getLatestCommentsFromReddit();
 
   log.debug(commentsList);
   log.info(commentsList.length);

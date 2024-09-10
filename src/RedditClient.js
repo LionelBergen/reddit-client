@@ -37,7 +37,7 @@ export async function getPostsFromSubreddit(numberOfPosts, subreddit, sortType) 
  * @param numberOfComments A number between 10-1000 (between 1-9 does not work for Reddit). Defaults to 1000
  * @return List of comment objects
 */
-export async function getLatestCommentsFromReddit(numberOfComments = MAX_NUM_COMMENTS) {
+export async function getLatestCommentsFromReddit({ numberOfComments = MAX_NUM_COMMENTS } = {}) {
   numberOfComments = getValidNumberOfComments(numberOfComments);
   const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
   log.debug(url);
