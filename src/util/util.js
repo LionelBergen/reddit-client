@@ -1,18 +1,20 @@
 /**
- * Returns either the input value, or the default value if it's not between min-max inclusive
+ * Returns either the input value, min, max or the default value if it's not between min-max inclusive
  *
- * @param {*} inputValue
- * @param {*} min
- * @param {*} max
- * @param {*} defaultValue
+ * @param {int} inputValue
+ * @param {int} min
+ * @param {int} max
+ * @param {int} defaultValue
  * @returns
  */
 export function getValidValue(inputValue, min, max, defaultValue) {
-  let validValue;
-  if(inputValue > max) {
+  let validValue = inputValue;
+  if (!inputValue) {
     validValue = defaultValue;
-  } else if (inputValue < min || !inputValue) {
-    validValue = defaultValue;
+  } else if(inputValue > max) {
+    validValue = max;
+  } else if (inputValue < min) {
+    validValue = min;
   }
 
   return validValue;

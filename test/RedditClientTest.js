@@ -68,6 +68,18 @@ describe('get posts from subreddit', () => {
 
     await getPostsFromSubreddit(100000, 'Programming', 'hot');
   });
+
+  it('limit set to 1 if under 1', async () => {
+    mockhttps.expectGet('https://ssl.reddit.com/r/Programming/hot.json?limit=1', mockResponseForPostsCall);
+
+    await getPostsFromSubreddit(0, 'Programming', 'hot');
+  });
+
+  it('limit set to 1 if blank', async () => {
+    mockhttps.expectGet('https://ssl.reddit.com/r/Programming/hot.json?limit=1', mockResponseForPostsCall);
+
+    await getPostsFromSubreddit(null, 'Programming', 'hot');
+  });
 });
 
 describe.skip('get moderators of subreddit', () => {
@@ -103,12 +115,18 @@ describe('get latest comments from reddit', () => {
   it('amount should default to 1000', async () => {
     mockhttps.expectGet('https://ssl.reddit.com/r/all/comments.json?limit=1000', mockResponseForCommentsList);
 
-    const result = await getLatestCommentsFromReddit(100000);
+    await getLatestCommentsFromReddit(100000);
   });
 
   it('amount should default to 10', async () => {
     mockhttps.expectGet('https://ssl.reddit.com/r/all/comments.json?limit=10', mockResponseForCommentsList);
 
-    const result = await getLatestCommentsFromReddit(3);
+    await getLatestCommentsFromReddit(3);
+  });
+
+  it('amount should default to 1000', async () => {
+    mockhttps.expectGet('https://ssl.reddit.com/r/all/comments.json?limit=1000', mockResponseForCommentsList);
+
+    await getLatestCommentsFromReddit();
   });
 });

@@ -2,6 +2,7 @@ import { getDataFromUrl } from './util/http.js';
 import log from './util/log.js';
 import parseJSON from './util/parse-json.js';
 import { parsePostArray, parseCommentArray } from './util/reddit/reddit-parser.js';
+import { getValidValue } from './util/util.js';
 
 const SUBREDDIT_URL = "https://ssl.reddit.com/r/";
 // This is the max number of posts Reddit allows to be retrieved at once. If a higher number is used, this is used anyway
@@ -43,10 +44,10 @@ export async function getSubredditModList(subreddit) {
 /**
  * Get a list of the newest comments from Reddit
  *
- * @param numberOfComments A number between 10-100 (between 1-9 does not work for Reddit). Defaults to 100
+ * @param numberOfComments A number between 10-1000 (between 1-9 does not work for Reddit). Defaults to 1000
  * @return List of comment objects
 */
-export async function getLatestCommentsFromReddit(numberOfComments = 100) {
+export async function getLatestCommentsFromReddit(numberOfComments = MAX_NUM_COMMENTS) {
   numberOfComments = getValidNumberOfComments(numberOfComments);
   const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
   log.debug(url);
@@ -104,13 +105,7 @@ function getCommentObjectFromRawURLData(rawDataFromURL) {
  * @return
  */
 function getValidNumberOfPosts(numberOfPosts) {
-  if(numberOfPosts > MAX_NUM_POSTS) {
-    numberOfPosts = MAX_NUM_POSTS;
-  } else if (numberOfPosts < MIN_NUM_POSTS || !numberOfPosts) {
-    numberOfPosts = MIN_NUM_POSTS;
-  }
-
-  return numberOfPosts;
+  return getValidValue(numberOfPosts, MIN_NUM_POSTS, MAX_NUM_POSTS, MIN_NUM_POSTS);
 }
 
 /**
@@ -120,11 +115,5 @@ function getValidNumberOfPosts(numberOfPosts) {
  * @return
  */
 function getValidNumberOfComments(numberOfComments) {
-  if(numberOfComments > MAX_NUM_COMMENTS) {
-    numberOfComments = MAX_NUM_COMMENTS;
-  } else if (numberOfComments < MIN_NUM_COMMENTS || !numberOfComments) {
-    numberOfComments = MIN_NUM_COMMENTS;
-  }
-
-  return numberOfComments;
+  return getValidValue(numberOfComments, MIN_NUM_COMMENTS, MAX_NUM_COMMENTS, MAX_NUM_COMMENTS);
 }
