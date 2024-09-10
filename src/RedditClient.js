@@ -11,6 +11,11 @@ export const MIN_NUM_POSTS = 1;
 export const MAX_NUM_COMMENTS = 1000;
 export const MIN_NUM_COMMENTS = 10;
 
+const REDDIT_OBJECT = {
+  COMMENT: 'COMMENT',
+  POST: 'POST'
+};
+
 /**
  * Returns posts from subreddit
  *
@@ -23,7 +28,22 @@ export async function getPostsFromSubreddit(numberOfPosts, subreddit, sortType) 
   numberOfPosts = getValidNumberOfPosts(numberOfPosts);
   const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
 
-  return await getPostsFromURL(url);
+  return await getRedditObjectFromURL(url, REDDIT_OBJECT.POST);
+}
+
+/**
+ * Get a list of the newest comments from Reddit
+ *
+ * @param numberOfComments A number between 10-1000 (between 1-9 does not work for Reddit). Defaults to 1000
+ * @return List of comment objects
+*/
+export async function getLatestCommentsFromReddit(numberOfComments = MAX_NUM_COMMENTS) {
+  numberOfComments = getValidNumberOfComments(numberOfComments);
+  const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
+  log.debug(url);
+  const latestComments = await getRedditObjectFromURL(url, REDDIT_OBJECT.COMMENT);
+
+  return latestComments;
 }
 
 /**
@@ -41,33 +61,16 @@ export async function getSubredditModList(subreddit) {
   console.log(jsonData); */
 }
 
-/**
- * Get a list of the newest comments from Reddit
- *
- * @param numberOfComments A number between 10-1000 (between 1-9 does not work for Reddit). Defaults to 1000
- * @return List of comment objects
-*/
-export async function getLatestCommentsFromReddit(numberOfComments = MAX_NUM_COMMENTS) {
-  numberOfComments = getValidNumberOfComments(numberOfComments);
-  const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
-  log.debug(url);
-  const latestComments = await getCommentsFromURL(url);
-
-  return latestComments;
-}
-
-async function getCommentsFromURL(url) {
+async function getRedditObjectFromURL(url, redditType) {
   const dataFromUrl = await getDataFromUrl(url);
   log.debug(dataFromUrl);
 
-  return getCommentObjectFromRawURLData(dataFromUrl);
-}
-
-async function getPostsFromURL(url) {
-  const data = await getDataFromUrl(url);
-  log.debug(data);
-
-  return getPostObjectsFromRawURLData(data);
+  switch(redditType) {
+    case REDDIT_OBJECT.COMMENT:
+      return getCommentObjectFromRawURLData(dataFromUrl);
+    case REDDIT_OBJECT.POST:
+      return getPostObjectsFromRawURLData(dataFromUrl);
+  }
 }
 
 /**
@@ -77,11 +80,7 @@ async function getPostsFromURL(url) {
  * @return An array of Post objects containing body, subreddit etc
 */
 function getPostObjectsFromRawURLData(rawDataFromURL) {
-  const jsonDataFromUrl = parseJSON(rawDataFromURL);
-
-  const result = jsonDataFromUrl.data.children.map(post => parsePostArray(post));
-
-  return result;
+  return getObjectFromRawData(rawDataFromURL, REDDIT_OBJECT.POST);
 }
 
 /**
@@ -91,9 +90,27 @@ function getPostObjectsFromRawURLData(rawDataFromURL) {
  * @return A Comment object containing body, subreddit etc
 */
 function getCommentObjectFromRawURLData(rawDataFromURL) {
+  return getObjectFromRawData(rawDataFromURL, REDDIT_OBJECT.COMMENT);
+}
+
+/**
+ *
+ * @param {string} rawDataFromURL
+ * @param {REDDIT_OBJECT} redditType
+ */
+function getObjectFromRawData(rawDataFromURL, redditType) {
   const jsonDataFromUrl = parseJSON(rawDataFromURL);
 
-  const result = jsonDataFromUrl.data.children.map(post => parseCommentArray(post));
+  const result = jsonDataFromUrl.data.children.map(post => {
+    switch (redditType) {
+      case REDDIT_OBJECT.COMMENT:
+        return parseCommentArray(post);
+      case REDDIT_OBJECT.POST:
+        return parsePostArray(post);
+      default:
+        throw 'Unknown reddit type: ' + redditType;
+    }
+  });
 
   return result;
 }
