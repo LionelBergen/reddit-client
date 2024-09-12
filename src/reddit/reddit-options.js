@@ -1,3 +1,7 @@
-export const redditOptions = {
-  USE_SIMPLE_RETURN_VALUES: true
-};
+export class RedditOptions {
+  constructor(useSimpleReturnValues) {
+    this.useSimpleReturnValues = useSimpleReturnValues;
+  }
+}
+
+export const DefaultOptions = new RedditOptions(true);

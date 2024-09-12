@@ -1,4 +1,4 @@
-import { redditOptions } from './reddit/reddit-options.js';
+import { DefaultOptions } from './reddit/reddit-options.js';
 import { SORT_TYPE } from './reddit/sort-type.js';
 import { getDataFromUrl } from './util/http.js';
 import log from './util/log.js';
@@ -30,12 +30,12 @@ export async function getPostsFromSubreddit({
   numberOfPosts = MIN_NUM_POSTS,
   subreddit,
   sortType = SORT_TYPE.NEW,
-  options = redditOptions
+  options = DefaultOptions
 }) {
   numberOfPosts = getValidNumberOfPosts(numberOfPosts);
   const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
 
-  return await getRedditObjectFromURL(url, REDDIT_OBJECT.POST, options.USE_SIMPLE_RETURN_VALUES);
+  return await getRedditObjectFromURL(url, REDDIT_OBJECT.POST, options.useSimpleReturnValues);
 }
 
 /**
@@ -47,12 +47,12 @@ export async function getPostsFromSubreddit({
 */
 export async function getLatestCommentsFromReddit({
   numberOfComments = MAX_NUM_COMMENTS,
-  options = redditOptions
+  options = DefaultOptions
 } = {}) {
   numberOfComments = getValidNumberOfComments(numberOfComments);
   const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
   log.debug(url);
-  const latestComments = await getRedditObjectFromURL(url, REDDIT_OBJECT.COMMENT, options.USE_SIMPLE_RETURN_VALUES);
+  const latestComments = await getRedditObjectFromURL(url, REDDIT_OBJECT.COMMENT, options.useSimpleReturnValues);
 
   return latestComments;
 }
