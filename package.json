@@ -14,6 +14,7 @@
   "license": "ISC",
   "devDependencies": {
     "eslint": "8.57.0",
+    "eslint-config-eslinter": "1.0.0",
     "mocha": "10.7.3",
     "mock-https": "^1.1.0"
   },
