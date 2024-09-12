@@ -52,7 +52,8 @@
 			"always"
 		],
 		"space-before-blocks": "error",
-		"key-spacing": "error"
+		"key-spacing": "error",
+		"no-multi-spaces": "error"
 	},
 	"overrides": [
     {
