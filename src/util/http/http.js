@@ -2,6 +2,14 @@ import https from 'https';
 
 const DEFAULT_USER_AGENT = 'u/dusty-trash reddit-client/2.0.0 by Lionel Bergen';
 
+function getOptions(userAgent) {
+  const agent = userAgent | DEFAULT_USER_AGENT;
+  const headers = { "user-agent": agent };
+  const options = { headers: headers };
+
+  return options;
+}
+
 /**
  * Run a GET request on a URL and return all the data
  *
@@ -10,10 +18,7 @@ const DEFAULT_USER_AGENT = 'u/dusty-trash reddit-client/2.0.0 by Lionel Bergen';
  * @return a promise containing data returned from the url
 */
 export function getDataFromUrl(url, userAgent) {
-  // Reddit requires a user-agent
-  const agent = userAgent | DEFAULT_USER_AGENT;
-  const headers = { "user-agent": agent };
-  const options = { headers: headers };
+  const options = getOptions(userAgent);
 
   return new Promise(function(resolve, reject) {
     https.get(url, options, (resp) => {

@@ -1,6 +1,7 @@
-import { DefaultOptions } from './reddit/reddit-options.js';
-import { SORT_TYPE } from './reddit/sort-type.js';
-import { getDataFromUrl } from './util/http.js';
+import { DefaultOptions } from './reddit/modal/reddit-options.js';
+import { SORT_TYPE } from './reddit/modal/sort-type.js';
+import { CreateAuth } from './reddit/reddit-auth.js';
+import { getDataFromUrl } from './util/http/http.js';
 import log from './util/log.js';
 import parseJSON from './util/parse-json.js';
 import { parsePostArray, parseCommentArray } from './util/reddit/reddit-parser.js';
@@ -18,24 +19,39 @@ const REDDIT_OBJECT = {
   POST: 'POST'
 };
 
-/**
- * Returns posts from subreddit
- *
- * @param numberOfPosts {int | MIN_NUM_POSTS} number of posts to retrieve, between 1-100
- * @param subreddit {string} subreddit to get posts from
- * @param sortType {SORT_TYPE | SORT_TYPE.NEW} E.G 'new', or 'hot'
- * @return Promise containing a list of RedditPost objects
-*/
-export async function getPostsFromSubreddit({
-  numberOfPosts = MIN_NUM_POSTS,
-  subreddit,
-  sortType = SORT_TYPE.NEW,
-  options = DefaultOptions
-}) {
-  numberOfPosts = getValidNumberOfPosts(numberOfPosts);
-  const url = SUBREDDIT_URL + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
+export class RedditClient {
+  constructor({ redditOptions, redditAuth }) {
+    this.redditOptions = redditOptions;
+    this.redditAuth = redditAuth;
+  }
 
-  return await getRedditObjectFromURL(url, REDDIT_OBJECT.POST, options.useSimpleReturnValues);
+  /**
+   * Returns posts from subreddit
+   *
+   * @param numberOfPosts {int | MIN_NUM_POSTS} number of posts to retrieve, between 1-100
+   * @param subreddit {string} subreddit to get posts from
+   * @param sortType {SORT_TYPE | SORT_TYPE.NEW} E.G 'new', or 'hot'
+   * @return Promise containing a list of RedditPost objects
+  */
+  async getPostsFromSubreddit({
+    numberOfPosts = MIN_NUM_POSTS,
+    subreddit,
+    sortType = SORT_TYPE.NEW
+  }) {
+    numberOfPosts = getValidNumberOfPosts(numberOfPosts);
+
+    const path = '/r/' + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
+    const dataFromUrl = await this.redditAuth.getListing(path);
+
+    return getPostObjectsFromRawURLData(dataFromUrl, this.redditOptions.useSimpleReturnValues);
+  }
+}
+
+export async function CreateAuthedClient({ redditOptions, redditAuth }) {
+  const redditClient = new RedditClient({ redditOptions, redditAuth });
+  redditClient.redditAuth = await CreateAuth({ redditAuth });
+
+  return redditClient;
 }
 
 /**

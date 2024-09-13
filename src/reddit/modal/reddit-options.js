@@ -1,5 +1,5 @@
 export class RedditOptions {
-  constructor(useSimpleReturnValues) {
+  constructor({ useSimpleReturnValues }) {
     this.useSimpleReturnValues = useSimpleReturnValues;
   }
 }
