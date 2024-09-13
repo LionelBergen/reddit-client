@@ -1,13 +1,11 @@
 import { DefaultOptions } from './reddit/modal/reddit-options.js';
 import { SORT_TYPE } from './reddit/modal/sort-type.js';
 import { CreateAuth } from './reddit/reddit-auth.js';
-import { getDataFromUrl } from './util/http/http.js';
 import log from './util/log.js';
 import parseJSON from './util/parse-json.js';
 import { parsePostArray, parseCommentArray } from './util/reddit/reddit-parser.js';
 import { getValidValue } from './util/util.js';
 
-const SUBREDDIT_URL = "https://ssl.reddit.com/r/";
 // This is the max number of posts Reddit allows to be retrieved at once. If a higher number is used, this is used anyway
 export const MAX_NUM_POSTS = 100;
 export const MIN_NUM_POSTS = 1;
@@ -20,7 +18,7 @@ const REDDIT_OBJECT = {
 };
 
 export class RedditClient {
-  constructor({ redditOptions, redditAuth }) {
+  constructor({ redditOptions = DefaultOptions, redditAuth }) {
     this.redditOptions = redditOptions;
     this.redditAuth = redditAuth;
   }
@@ -42,8 +40,29 @@ export class RedditClient {
 
     const path = '/r/' + subreddit + "/" + sortType + ".json?limit=" + numberOfPosts;
     const dataFromUrl = await this.redditAuth.getListing(path);
+    log.debug(dataFromUrl);
 
-    return getPostObjectsFromRawURLData(dataFromUrl, this.redditOptions.useSimpleReturnValues);
+    return await getPostObjectsFromRawURLData(dataFromUrl, this.redditOptions.useSimpleReturnValues);
+  }
+
+  /**
+   * Get a list of the newest comments from Reddit
+   *
+   * @param numberOfComments {int | MAX_NUM_COMMENTS} A number between 10-1000 (between 1-9 does not work for Reddit)
+   * @param options {redditOptions} reddit options
+   * @return List of comment objects
+  */
+  async getLatestCommentsFromReddit({
+    numberOfComments = MAX_NUM_COMMENTS,
+    subreddit = 'all'
+  } = {}) {
+    numberOfComments = getValidNumberOfComments(numberOfComments);
+
+    const path = `/r/${subreddit}/comments.json?limit=${numberOfComments}`;
+    const dataFromUrl = await this.redditAuth.getListing(path);
+    log.debug(dataFromUrl);
+
+    return await getCommentObjectFromRawURLData(dataFromUrl, this.redditOptions.useSimpleReturnValues);
   }
 }
 
@@ -52,25 +71,6 @@ export async function CreateAuthedClient({ redditOptions, redditAuth }) {
   redditClient.redditAuth = await CreateAuth({ redditAuth });
 
   return redditClient;
-}
-
-/**
- * Get a list of the newest comments from Reddit
- *
- * @param numberOfComments {int | MAX_NUM_COMMENTS} A number between 10-1000 (between 1-9 does not work for Reddit)
- * @param options {redditOptions} reddit options
- * @return List of comment objects
-*/
-export async function getLatestCommentsFromReddit({
-  numberOfComments = MAX_NUM_COMMENTS,
-  options = DefaultOptions
-} = {}) {
-  numberOfComments = getValidNumberOfComments(numberOfComments);
-  const url = SUBREDDIT_URL + "all/comments.json?limit=" + numberOfComments;
-  log.debug(url);
-  const latestComments = await getRedditObjectFromURL(url, REDDIT_OBJECT.COMMENT, options.useSimpleReturnValues);
-
-  return latestComments;
 }
 
 /**
@@ -88,7 +88,8 @@ export async function getSubredditModList(subreddit) {
   console.log(jsonData); */
 }
 
-async function getRedditObjectFromURL(url, redditType, useSimpleObjects = false) {
+// TODO: Maybe use path as a variable and change above methods
+/* async function getRedditObjectFromURL(url, redditType, useSimpleObjects = false) {
   const dataFromUrl = await getDataFromUrl(url);
   log.debug(dataFromUrl);
 
@@ -98,7 +99,7 @@ async function getRedditObjectFromURL(url, redditType, useSimpleObjects = false)
     case REDDIT_OBJECT.POST:
       return getPostObjectsFromRawURLData(dataFromUrl, useSimpleObjects);
   }
-}
+} */
 
 /**
  * Returns an object based on the data returned from a Reddit URL.

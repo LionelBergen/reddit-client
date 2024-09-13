@@ -1,5 +1,5 @@
 import RedditApi from 'reddit-oauth';
-import log from '../util/log';
+import log from '../util/log.js';
 const DEFAULT_USER_AGENT = 'u/dusty-trash reddit-client/2.0.0 by Lionel Bergen';
 
 export class RedditAuth {

@@ -19,3 +19,7 @@ export function getValidValue(inputValue, min, max, defaultValue) {
 
   return validValue;
 }
+
+export function getEnvironmentVariable(key) {
+  return process.env[key];
+}
