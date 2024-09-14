@@ -64,6 +64,27 @@ export class RedditClient {
 
     return await getCommentObjectFromRawURLData(dataFromUrl, this.redditOptions.useSimpleReturnValues);
   }
+
+  /**
+   * Gets a list of the names of moderators for the subreddit
+   *
+   * @param subreddit
+   * @return Promise containing list of moderator usernames
+  */
+  async getSubredditModList(subreddit) {
+    const path = `/r/${subreddit}/about/moderators.json`;
+    const dataFromUrl = await this.redditAuth.getListing(path);
+
+    const jsonData = parseJSON(dataFromUrl);
+    log.debug(jsonData);
+
+    if (jsonData && jsonData.data) {
+      log.debug(jsonData.data);
+      return jsonData.data.children;
+    }
+
+    return jsonData;
+  }
 }
 
 export async function CreateAuthedClient({ redditOptions, redditAuth }) {
@@ -72,34 +93,6 @@ export async function CreateAuthedClient({ redditOptions, redditAuth }) {
 
   return redditClient;
 }
-
-/**
- * Gets a list of the names of moderators for the subreddit
- *
- * @param subreddit
- * @return Promise containing list of moderator usernames
-*/
-// eslint-disable-next-line
-export async function getSubredditModList(subreddit) {
-  throw 'UNIMPLEMENTED. Requires Authentication.';
-  /* const url = 'https://ssl.reddit.com/r/' + subreddit + '/about/moderators.json';
-  const data = await getDataFromUrl(url);
-  const jsonData = parseJSON(data);
-  console.log(jsonData); */
-}
-
-// TODO: Maybe use path as a variable and change above methods
-/* async function getRedditObjectFromURL(url, redditType, useSimpleObjects = false) {
-  const dataFromUrl = await getDataFromUrl(url);
-  log.debug(dataFromUrl);
-
-  switch(redditType) {
-    case REDDIT_OBJECT.COMMENT:
-      return getCommentObjectFromRawURLData(dataFromUrl, useSimpleObjects);
-    case REDDIT_OBJECT.POST:
-      return getPostObjectsFromRawURLData(dataFromUrl, useSimpleObjects);
-  }
-} */
 
 /**
  * Returns an object based on the data returned from a Reddit URL.

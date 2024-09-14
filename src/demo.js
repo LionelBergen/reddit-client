@@ -30,7 +30,7 @@ function isValidAuthModal(authModal) {
   try {
     const redditClient = await CreateAuthedClient({ redditOptions: redditOptions, redditAuth: redditAuthModal });
     // const results = await redditClient.getPostsFromSubreddit({ numberOfPosts: 1000, subreddit: 'test', sortType: 'new' });
-    const results = await redditClient.getLatestCommentsFromReddit();
+    const results = await redditClient.getSubredditModList('test');
     log.info(results);
     log.info(results.length);
   } catch (e) {
