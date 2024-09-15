@@ -85,6 +85,11 @@ export class RedditClient {
 
     return jsonData;
   }
+
+  async postComment(commentId, textToComment) {
+    log.info('trying to post comment : ' + textToComment + ' with id: ' + commentId);
+    return await this.redditAuth.postComment(commentId, textToComment);
+  }
 }
 
 export async function CreateAuthedClient({ redditOptions, redditAuth }) {

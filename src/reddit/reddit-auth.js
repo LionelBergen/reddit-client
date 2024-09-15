@@ -49,6 +49,26 @@ export class RedditAuth {
       });
     });
   }
+
+  postComment(commentId, text) {
+    const self = this;
+    const path = '/api/comment';
+    const params = {
+      api_type: 'json',
+      thing_id: commentId,
+      text
+    };
+
+    return new Promise((resolve, reject) => {
+      self.Reddit.post(path, params, (error, response, body) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(body);
+        }
+      });
+    });
+  }
 }
 
 export async function CreateAuth({ redditAuth }) {
