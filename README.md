@@ -7,6 +7,7 @@ Simple Node.js module used for making HTTP requests to Reddit in order to view c
 
 Example call to list all comments
 ---------------------------------  
+*See **demo.js** for working examples*
 
 <p>
 
@@ -14,9 +15,23 @@ Example call to list all comments
 
 ```javascript
 const RedditClient = require('reddit-simple-client');
+import { CreateAuthedClient } from require('reddit-client');
+
+const redditOptions = new RedditOptions({ useSimpleReturnValues: true });
+const redditAuthModal = new RedditAuthModal({
+  username: 'REDDIT_USERNAME',
+  password: 'REDDIT_PASSWORD',
+  appId: 'REDDIT_APP_ID',
+  appSecret: 'REDDIT_APP_SECRET',
+  redirectUrl: 'https://github.com/LionelBergen/reddit-comment-reader',
+  accessToken: null,
+  userAgent: 'u/dusty-trash reddit-client/2.0.0 by Lionel Bergen'
+});
+
+const redditClient = await CreateAuthedClient({ redditOptions: redditOptions, redditAuth: redditAuthModal });
 
 // Returns a list of Comment objects containing the author, comment body etc.
-const latestRedditComments = await RedditClient.getLatestCommentsFromReddit(100);
+const latestRedditComments = await redditClient.getLatestCommentsFromReddit(1000);
 ```
 
 Documentation ⭐
@@ -38,8 +53,10 @@ Get a list of the newest comments from Reddit
 numberOfComments A number between 10-100 (between 1-9 does not work for Reddit)  
 return - Promise containing list of comment objects
 
+### 'RedditClient.postComment(commentId, textToComment)'
+Posts a comment to Reddit  
+commentId - the `comment.name`. *E.G t1_lnbe9pa*  
+textToComment - what the posted comment should contain  
+
 ### `RedditClient.MAX_NUM_POSTS`  
 Max number of posts or comments Reddit allows you to rerieve at once. If a number thats higher is passed, this number is used anyway  
-
-
-
