@@ -61,6 +61,7 @@ export class RedditAuth {
 
     return new Promise((resolve, reject) => {
       self.Reddit.post(path, params, (error, response, body) => {
+        log.debug(response);
         if (error) {
           reject(error);
         } else {
