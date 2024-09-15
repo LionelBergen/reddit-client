@@ -1,5 +1,5 @@
 import log from './util/log.js';
-import { CreateAuthedClient } from './RedditClient.js';
+import { CreateAuthedClient } from './reddit-client.js';
 import { RedditOptions } from './reddit/modal/reddit-options.js';
 import { RedditAuthModal } from './reddit/modal/reddit-auth-modal.js';
 import { getEnvironmentVariable } from './util/util.js';
