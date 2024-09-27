@@ -1,4 +1,4 @@
-reddit-client
+reddit-simple-client
 -------------
 Simple Node.js module used for making HTTP requests to Reddit in order to view comments on all, or a specific Subreddit  
 *Does not force rate limiting. Please ensure you limit your requests to avoid getting ip blocked from Reddit*
@@ -14,7 +14,7 @@ Example call to list all comments
 ####
 
 ```javascript
-import { CreateAuthedClient } from 'reddit-client';
+import { CreateAuthedClient } from 'reddit-simple-client';
 
 const redditOptions = { useSimpleReturnValues: true };
 const redditAuthModal = {
@@ -22,9 +22,9 @@ const redditAuthModal = {
   password: 'REDDIT_PASSWORD',
   appId: 'REDDIT_APP_ID',
   appSecret: 'REDDIT_APP_SECRET',
-  redirectUrl: 'https://github.com/LionelBergen/reddit-comment-reader',
+  redirectUrl: 'https://github.com/LionelBergen/reddit-client',
   accessToken: null,
-  userAgent: 'u/dusty-trash reddit-client/2.0.0 by Lionel Bergen'
+  userAgent: 'u/dusty-trash reddit-simple-client/2.0.0 by Lionel Bergen'
 };
 
 const RedditClient = await CreateAuthedClient({ redditOptions: redditOptions, redditAuth: redditAuthModal });

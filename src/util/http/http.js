@@ -1,6 +1,6 @@
 import https from 'https';
 
-const DEFAULT_USER_AGENT = 'u/dusty-trash reddit-client/2.0.0 by Lionel Bergen';
+const DEFAULT_USER_AGENT = 'u/dusty-trash reddit-simple-client/2.0.0 by Lionel Bergen';
 
 function getOptions(userAgent) {
   const agent = userAgent | DEFAULT_USER_AGENT;

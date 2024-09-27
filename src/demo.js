@@ -2,7 +2,7 @@ import log from './util/log.js';
 import { CreateAuthedClient } from './reddit-client.js';
 import { getEnvironmentVariable } from './util/util.js';
 
-const DEFAULT_USER_AGENT = 'u/dusty-trash reddit-client/2.0.0 by Lionel Bergen';
+const DEFAULT_USER_AGENT = 'u/dusty-trash reddit-simple-client/2.0.0 by Lionel Bergen';
 
 function isValidAuthModal(authModal) {
   return authModal.username && authModal.password && authModal.appId && authModal.appSecret;
@@ -16,7 +16,7 @@ function isValidAuthModal(authModal) {
     password: getEnvironmentVariable('REDDIT_PASSWORD'),
     appId: getEnvironmentVariable('REDDIT_APP_ID'),
     appSecret: getEnvironmentVariable('REDDIT_APP_SECRET'),
-    redirectUrl: 'https://github.com/LionelBergen/reddit-comment-reader',
+    redirectUrl: 'https://github.com/LionelBergen/reddit-client',
     accessToken: null,
     userAgent: DEFAULT_USER_AGENT
   };
