@@ -16,7 +16,8 @@
     "eslint": "8.57.0",
     "eslint-config-eslinter": "1.0.1",
     "mocha": "10.7.3",
-    "mock-https": "^1.1.0"
+    "mock-https": "^1.1.0",
+    "dotenv": "16.4.5"
   },
   "repository": {
     "type": "git",
