@@ -7,7 +7,7 @@ const DEFAULT_USER_AGENT = 'u/dusty-trash reddit-simple-client/2.0.0 by Lionel B
 
 function isValidAuthModal(authModal) {
   for (const property in authModal) {
-    if (!authModal[property]) {
+    if (property !== 'accessToken' && !authModal[property]) {
       log.error(`${property} is not set!`);
     }
   }
@@ -32,6 +32,7 @@ function isValidAuthModal(authModal) {
   }
 
   try {
+    log.info('About to authenticate reddit client')
     const redditClient = await CreateAuthedClient({ redditOptions: redditOptions, redditAuth: redditAuthModal });
     /* const results = await redditClient.getPostsFromSubreddit({
       numberOfPosts: 1000,
