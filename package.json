@@ -1,6 +1,6 @@
 {
   "name": "reddit-simple-client",
-  "version": "2.0.0-beta.5",
+  "version": "2.0.0-beta.6",
   "type": "module",
   "description": "Simple module for interacting with Reddit, using oauth to authenticate to the reddit api",
   "main": "src/reddit-client.js",

@@ -90,6 +90,10 @@ export class RedditClient {
     log.info('trying to post comment : ' + textToComment + ' with id: ' + commentId);
     return await this.redditAuth.postComment(commentId, textToComment);
   }
+
+  async resetAuth() {
+    await this.redditAuth.getAuth();
+  }
 }
 
 export async function CreateAuthedClient({ redditOptions, redditAuth }) {

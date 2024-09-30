@@ -11,6 +11,7 @@ function isValidAuthModal(authModal) {
       log.error(`${property} is not set!`);
     }
   }
+
   return authModal.username && authModal.password && authModal.appId && authModal.appSecret;
 }
 
@@ -32,7 +33,7 @@ function isValidAuthModal(authModal) {
   }
 
   try {
-    log.info('About to authenticate reddit client')
+    log.info('About to authenticate reddit client');
     const redditClient = await CreateAuthedClient({ redditOptions: redditOptions, redditAuth: redditAuthModal });
     /* const results = await redditClient.getPostsFromSubreddit({
       numberOfPosts: 1000,
