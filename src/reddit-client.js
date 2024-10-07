@@ -134,6 +134,10 @@ function getCommentObjectFromRawURLData(rawDataFromURL, useSimpleObjects = false
 function getObjectFromRawData(rawDataFromURL, redditType, useSimpleValues = false) {
   const jsonDataFromUrl = parseJSON(rawDataFromURL);
 
+  if (!jsonDataFromUrl.data || !jsonDataFromUrl.data.children) {
+    return jsonDataFromUrl;
+  }
+
   const result = jsonDataFromUrl.data.children.map(post => {
     if (!useSimpleValues) {
       return post.data;
